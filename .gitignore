@@ -1,2 +1,5 @@
 .claude/tmp/*
 !.claude/tmp/.gitkeep
+__pycache__/
+*.pyc
+*.pyo
