@@ -94,34 +94,130 @@ def chunk_text(text: str, window: int = WINDOW_TOKENS, overlap: int = OVERLAP_TO
 
 # ── NuExtract call ────────────────────────────────────────────────────────────
 
+def _extract_json(raw: str) -> dict:
+    """
+    Extract the best JSON object from nuextract-16k output.
+
+    NuExtract-v1.5 emits two blocks: an empty template echo followed by the real
+    output in a ```json fence. We prefer the fenced block; fall back to scanning
+    for the last well-formed JSON object if no fence is present.
+    """
+    # Prefer content inside ```json ... ``` (real output follows the echo)
+    fence_idx = raw.find("```json")
+    if fence_idx != -1:
+        after = raw[fence_idx + 7:]
+        close = after.find("```")
+        candidate = after[:close].strip() if close != -1 else after.strip()
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            pass
+
+    # No fence — try each `{...}` block using raw_decode (first complete object)
+    decoder = json.JSONDecoder()
+    pos = 0
+    last_obj = None
+    while pos < len(raw):
+        start = raw.find("{", pos)
+        if start == -1:
+            break
+        try:
+            obj, end = decoder.raw_decode(raw, start)
+            last_obj = obj   # keep last successfully-parsed object (richest)
+            pos = end
+        except json.JSONDecodeError:
+            pos = start + 1
+    if last_obj is not None:
+        return last_obj
+
+    return {"_parse_error": raw}
+
+
+def _is_chat_model(model_name: str) -> bool:
+    """Return True for instruction-following chat models (phi4, llama, mistral…)."""
+    chat_prefixes = ("phi4", "phi-4", "llama", "mistral", "qwen", "gemma")
+    return any(model_name.lower().startswith(p) for p in chat_prefixes)
+
+
 def nuextract_call(template: str, text: str) -> dict:
-    """Call NuExtract with the mandatory non-chat prompt format. temperature=0.0 required."""
-    prompt = PROMPT_TEMPLATE.format(json_template=template, input_text=text)
-    response = ollama.generate(
-        model=MODEL_NAME,
-        prompt=prompt,
-        options={"temperature": 0.0},   # CRITICAL — Ollama default 0.7 causes hallucinations
-    )
-    raw = response["response"].strip()
+    """
+    Call the extraction model with the appropriate API.
+
+    - nuextract-* models: use ollama.generate() with the mandatory non-chat prompt format.
+    - Chat models (phi4, llama, …): use ollama.chat() with an instruction prompt.
+      This path handles first-person prose and complex markdown that nuextract cannot.
+    """
+    if _is_chat_model(MODEL_NAME):
+        instruction = (
+            f"Extract named entities from the text below. "
+            f"Return ONLY valid JSON matching this schema (no explanation):\n"
+            f"{template}\n\nText:\n{text}"
+        )
+        response = ollama.chat(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": instruction}],
+            options={"temperature": 0.0},
+        )
+        raw = response["message"]["content"].strip()
+    else:
+        prompt = PROMPT_TEMPLATE.format(json_template=template, input_text=text)
+        response = ollama.generate(
+            model=MODEL_NAME,
+            prompt=prompt,
+            options={"temperature": 0.0},   # CRITICAL — Ollama default 0.7 causes hallucinations
+        )
+        raw = response["response"].strip()
+
     try:
         return json.loads(raw)
     except json.JSONDecodeError:
-        # Model sometimes emits trailing text — try to extract the JSON object
-        start = raw.find("{")
-        end   = raw.rfind("}") + 1
-        if start != -1 and end > start:
-            try:
-                return json.loads(raw[start:end])
-            except json.JSONDecodeError:
-                pass
-        return {"_parse_error": raw}
+        return _extract_json(raw)
 
 
 # ── Per-document extraction ───────────────────────────────────────────────────
 
+def _normalise_text(text: str) -> str:
+    """
+    Prepare markdown doc text for NuExtract.
+
+    Two transforms are applied:
+    1. Strip ATX markdown headers — NuExtract's prompt uses '### Template:' /
+       '### Text:' as structural delimiters; markdown '#' headers in the body
+       cause the model to misread the prompt structure and emit an empty echo.
+    2. De-personalise first-person phrases → third-person. NuExtract was trained
+       on Wikipedia/academic prose and silently returns empty templates when the
+       text is written in first person ("I have implemented...").
+    """
+    import re
+
+    text = re.sub(r"^#{1,6}\s+", "", text, flags=re.MULTILINE)
+
+    replacements = [
+        (r"\bI have\b", "The author has"),
+        (r"\bI've\b",   "The author has"),
+        (r"\bI am\b",   "The system is"),
+        (r"\bI'm\b",    "The system is"),
+        (r"\bI created\b",     "The author created"),
+        (r"\bI built\b",       "The author built"),
+        (r"\bI implemented\b", "The author implemented"),
+        (r"\bI introduced\b",  "The author introduced"),
+        (r"\bI added\b",       "The author added"),
+        (r"\bI made\b",        "The author made"),
+        (r"\bI wrote\b",       "The author wrote"),
+        (r"\bI use\b",         "The system uses"),
+        (r"\bI used\b",        "The system used"),
+        (r"\bI can\b",         "The system can"),
+        (r"\bmy\b",            "the"),
+    ]
+    for pattern, replacement in replacements:
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+    return text
+
+
 def extract_document(file_path: str) -> dict:
     """Run two-pass NuExtract extraction on a single document."""
-    text = Path(file_path).read_text(encoding="utf-8", errors="replace")
+    raw_text = Path(file_path).read_text(encoding="utf-8", errors="replace")
+    text = _normalise_text(raw_text)
     token_count = count_tokens(text)
 
     print(f"  Processing: {file_path} (~{token_count} tokens)")

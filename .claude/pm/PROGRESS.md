@@ -2,6 +2,56 @@
 
 ---
 
+## 2026-05-20 — Steps 0,1,3,4 complete; all success gates passed (issue-8-semantic-kg-extraction)
+
+### Steps 3 + 4 completed
+- Step 3 (NuExtract docs): phi4 via chat API used as extractor — 5/5 docs, 88 entities, 51 relations
+  NuExtract-v1.5 limitation found: silently returns empty template on first-person prose and complex markdown
+  Fix applied: pipeline now supports chat models (phi4) via ollama.chat() alongside NuExtract generate()
+  Additional fixes: markdown header stripping, first-person de-personalisation added to _normalise_text()
+  Also fixed: NuExtract double-JSON response (echo + ```json fence) — _extract_json() handles this
+- Step 4 (kg-gen): model name bug fixed (phi-4 → phi4, Ollama tag has no hyphen)
+  Result: 10/10 files, 371 entities, 202 SPO triples
+- Bug fixed in kggen default model — needs --model ollama_chat/phi4 or fix default in script
+- Committed validator fixes: e986944 refs #3
+
+### Remaining
+- Step 5: fill comparison-template.md with results from Steps 1 and 4
+- NuExtract limitation is a key finding for comparison: nuextract-16k can't handle real-world prose without preprocessing
+
+---
+
+## 2026-05-20 — Execution phase: Steps 0, 1 complete; Steps 3+4 in debug (issue-8-semantic-kg-extraction)
+
+### Environment setup completed
+- Migrated all Ollama models from C:\Users\kaanchan\.ollama\models → D:\Models\ollama (~32 GB)
+- Set OLLAMA_MODELS=D:\Models\ollama as persistent user-level env var
+- Pulled phi4 (9.1 GB) and gemma4:26b (17 GB) into Ollama at D:\Models\ollama
+- Confirmed: 9 models total in Ollama (nuextract-16k, iodose/nuextract-v1.5, phi4, gemma4:26b, qwen variants)
+- Note: Ollama tray app (ollama app.exe) must be killed and relaunched for env var to apply;
+  workaround: start `ollama serve` from a shell that has OLLAMA_MODELS set
+
+### Step 0 — PASS (refs #2)
+- llama-server starts with Phi-4 14B Q4_K_M on GPU, port 8080
+- /v1/models confirmed model ID: `phi-4-Q4_K_M.gguf`
+- test-endpoint.ps1 returns SUCCESS on both /v1/models and /v1/chat/completions
+
+### Step 1 — PASS (refs #3)
+- graphify extraction on 10-file Ralph test slice (5 py + 5 md from C:\Users\kaanchan\AppData\Local\Temp\ralph-test-slice)
+- Result: 43 nodes, 47 edges, 11 communities
+- Bug found + fixed in validate_graphify_output.py: was reading "edges" key, graphify uses "links"
+- Added contains + rationale_for to valid relation types (graphify uses these, spec did not list them)
+- Committed: e986944 refs #3
+
+### Steps 3+4 — IN PROGRESS
+- Step 3 (NuExtract): pipeline runs without error, but returns 0 entities/0 relations for all 5 docs
+  Direct model probe works (4 entities from synthetic text). Bug is in pipeline–model interaction.
+  Next: direct test with actual doc content to see raw response.
+- Step 4 (kg-gen): fails with "model 'phi-4' not found" — Ollama tag is phi4 (no hyphen).
+  Fix: re-run with --model ollama_chat/phi4
+
+---
+
 ## 2026-05-20 — Orchestrated script scaffolding for #8 (issue-8-semantic-kg-extraction branch)
 
 - Created parent GH issue #8, linked sub-issues #2–#7 as children via comments + task list
