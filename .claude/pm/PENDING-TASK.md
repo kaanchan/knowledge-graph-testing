@@ -1,9 +1,10 @@
-# PENDING TASK — Knowledge Graph: Full Corpus Run + Graph Utilisation
+# PENDING TASK — Knowledge Graph: Track 1 — Graph Utilisation (GH #10)
 
 **Branch:** issue-8-semantic-kg-extraction
-**Last commit:** 0841f9a
+**Last commit:** 21a176d
+**Active GH issue:** #10 (Track 1: Graph utilisation)
 **Parent GH issue:** #8
-**Status:** Step 5 closed (#7). Ready for next phase.
+**Status:** Extraction pipeline complete. Starting graph utilisation phase.
 
 ---
 
