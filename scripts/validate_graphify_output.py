@@ -29,7 +29,8 @@ VALID_CONFIDENCE   = {"EXTRACTED", "INFERRED", "AMBIGUOUS"}
 VALID_FILE_TYPES   = {"code", "document", "paper", "image", "rationale", "concept"}
 VALID_RELATIONS    = {
     "calls", "implements", "references", "cites",
-    "conceptually_related_to", "shares_data_with", "semantically_similar_to"
+    "conceptually_related_to", "shares_data_with", "semantically_similar_to",
+    "contains", "rationale_for",
 }
 
 
@@ -46,7 +47,7 @@ def validate(data: dict) -> tuple[bool, list[str], list[str]]:
     warnings: list[str] = []
 
     nodes = data.get("nodes", [])
-    edges = data.get("edges", [])
+    edges = data.get("edges", data.get("links", []))
 
     # ── Node checks ───────────────────────────────────────────────────────────
     node_ids: set[str] = set()
@@ -157,7 +158,7 @@ def main():
         reset  = "\033[0m"
 
         n_nodes = len(record.get("nodes", []))
-        n_edges = len(record.get("edges", []))
+        n_edges = len(record.get("edges", record.get("links", [])))
         print(f"{color}[{status}]{reset} {src}  ({n_nodes} nodes, {n_edges} edges)")
 
         for err in errors:
