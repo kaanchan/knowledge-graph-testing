@@ -57,13 +57,49 @@ MODEL_NAME      = "nuextract3"      # Qwen3.5-4B, registered via Modelfile — s
 WINDOW_TOKENS   = 4_000             # max tokens per sliding window chunk
 OVERLAP_TOKENS  = 128               # overlap between adjacent chunks
 
-# NuExtract MANDATORY prompt format (non-chat — do NOT use chat messages API)
+# NuExtract MANDATORY prompt format
 PROMPT_TEMPLATE = "<|input|>\n### Template:\n{json_template}\n### Text:\n{input_text}\n\n<|output|>"
 
-# Pass 1: entity extraction
-ENTITY_TEMPLATE = json.dumps({"entities": [{"name": "", "type": ""}]}, indent=2)
+# nuextract3: single-pass combined template shown to the model in the prompt
+COMBINED_TEMPLATE = json.dumps({
+    "entities": [{"name": "", "type": ""}],
+    "relations": [{"subject": "", "predicate": "", "object": ""}],
+}, indent=2)
 
-# Pass 2: relation extraction (augmented with entity names prepended to text)
+# nuextract3: JSON Schema passed to Ollama format= for constrained decoding.
+# This forces valid, complete JSON output without needing a num_predict cap.
+COMBINED_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "entities": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "type": {"type": "string"},
+                },
+                "required": ["name", "type"],
+            },
+        },
+        "relations": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "subject":   {"type": "string"},
+                    "predicate": {"type": "string"},
+                    "object":    {"type": "string"},
+                },
+                "required": ["subject", "predicate", "object"],
+            },
+        },
+    },
+    "required": ["entities", "relations"],
+}
+
+# Legacy two-pass templates (nuextract-16k / phi4 fallback paths)
+ENTITY_TEMPLATE   = json.dumps({"entities": [{"name": "", "type": ""}]}, indent=2)
 RELATION_TEMPLATE = json.dumps({"relations": [{"subject": "", "predicate": "", "object": ""}]}, indent=2)
 
 
@@ -159,7 +195,8 @@ def nuextract_call(template: str, text: str) -> dict:
             model=MODEL_NAME,
             messages=[{"role": "user", "content": prompt}],
             think=False,
-            options={"temperature": 0.0, "num_predict": 512, "repeat_penalty": 1.3},
+            format=COMBINED_SCHEMA,     # constrained decoding — engine closes JSON correctly
+            options={"temperature": 0.0},
         )
         raw = response["message"]["content"].strip()
     elif _is_chat_model(MODEL_NAME):
@@ -253,28 +290,30 @@ def extract_document(file_path: str) -> dict:
         if len(chunks) > 1:
             print(f"    Chunk {i + 1}/{len(chunks)}")
 
-        # ── Pass 1: entity extraction ──────────────────────────────────────
-        pass1_result = nuextract_call(ENTITY_TEMPLATE, chunk)
-        chunk_entities = pass1_result.get("entities", [])
-        # Filter out empty/malformed entities
-        chunk_entities = [e for e in chunk_entities if isinstance(e, dict) and e.get("name")]
-        all_entities.extend(chunk_entities)
-
-        # ── Pass 2: relation extraction (entities prepended to text) ───────
-        entity_names = [e["name"] for e in chunk_entities]
-        if entity_names:
-            augmented_text = "Entities found: " + ", ".join(entity_names) + "\n\n" + chunk
+        if _is_nuextract3(MODEL_NAME):
+            # ── Single-pass: entities + relations in one call ──────────────
+            result = nuextract_call(COMBINED_TEMPLATE, chunk)
+            chunk_entities = [e for e in result.get("entities", []) if isinstance(e, dict) and e.get("name")]
+            chunk_relations = [
+                r for r in result.get("relations", [])
+                if isinstance(r, dict) and r.get("subject") and r.get("predicate") and r.get("object")
+            ]
+            all_entities.extend(chunk_entities)
+            all_relations.extend(chunk_relations)
         else:
-            augmented_text = chunk
+            # ── Two-pass: entity extraction then relation extraction ────────
+            pass1_result = nuextract_call(ENTITY_TEMPLATE, chunk)
+            chunk_entities = [e for e in pass1_result.get("entities", []) if isinstance(e, dict) and e.get("name")]
+            all_entities.extend(chunk_entities)
 
-        pass2_result = nuextract_call(RELATION_TEMPLATE, augmented_text)
-        chunk_relations = pass2_result.get("relations", [])
-        # Filter out empty/malformed relations
-        chunk_relations = [
-            r for r in chunk_relations
-            if isinstance(r, dict) and r.get("subject") and r.get("predicate") and r.get("object")
-        ]
-        all_relations.extend(chunk_relations)
+            entity_names = [e["name"] for e in chunk_entities]
+            augmented_text = ("Entities found: " + ", ".join(entity_names) + "\n\n" + chunk) if entity_names else chunk
+            pass2_result = nuextract_call(RELATION_TEMPLATE, augmented_text)
+            chunk_relations = [
+                r for r in pass2_result.get("relations", [])
+                if isinstance(r, dict) and r.get("subject") and r.get("predicate") and r.get("object")
+            ]
+            all_relations.extend(chunk_relations)
 
     # Deduplicate entities by name (case-insensitive)
     seen_entities: set[str] = set()

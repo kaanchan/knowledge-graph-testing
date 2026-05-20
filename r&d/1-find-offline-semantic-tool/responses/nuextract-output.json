@@ -1,653 +1,892 @@
 [
   {
-    "source_file": "C:/Users/kaanchan/Projects/AI/ralph/docs/Claude_Handoff.md",
-    "token_count": 4552,
-    "chunks_processed": 2,
-    "entities": [
-      {
-        "name": "Claude Sonnet",
-        "type": "Person"
-      },
-      {
-        "name": "Opus",
-        "type": "Organization/Software"
-      },
-      {
-        "name": "RALPH",
-        "type": "Project/Software"
-      },
-      {
-        "name": "Git Bash / MINGW64 shell",
-        "type": "Software/Tool"
-      },
-      {
-        "name": "pyenv-win",
-        "type": "Software/Tool"
-      },
-      {
-        "name": "RTX 3090",
-        "type": "Hardware/GPU"
-      },
-      {
-        "name": "Ollama",
-        "type": "Software/Service"
-      },
-      {
-        "name": "qwen25-coder-14b:latest",
-        "type": "Model"
-      },
-      {
-        "name": "pytest",
-        "type": "Software/Tool"
-      },
-      {
-        "name": "Gemini API key",
-        "type": "Credential"
-      },
-      {
-        "name": "LangSmith",
-        "type": "Software/Tool"
-      },
-      {
-        "name": "Windows 11",
-        "type": "Operating System"
-      },
-      {
-        "name": "Python",
-        "type": "Programming Language"
-      },
-      {
-        "name": "3.12.2",
-        "type": "Version Number"
-      },
-      {
-        "name": "qwen25-coder-14b",
-        "type": "Model Name"
-      },
-      {
-        "name": "localhost:11434",
-        "type": "Localhost Address"
-      },
-      {
-        "name": "9.7GB",
-        "type": "Memory Size"
-      },
-      {
-        "name": "PYTHONUTF8=1",
-        "type": "Environment Variable"
-      },
-      {
-        "name": "PYTHONIOENCODING=utf-8",
-        "type": "Environment Variable"
-      },
-      {
-        "name": "9.0.3",
-        "type": "Version Number"
-      },
-      {
-        "name": ".env file",
-        "type": "Configuration File"
-      },
-      {
-        "name": "C:\\Users\\kaanchan\\Projects\\AI\\ralph",
-        "type": "File Path"
-      },
-      {
-        "name": "ollama ps",
-        "type": "Command"
-      },
-      {
-        "name": "cd ../ralph-test-target",
-        "type": "Command"
-      },
-      {
-        "name": "solution.py",
-        "type": "Python File"
-      },
-      {
-        "name": "test_solution.py",
-        "type": "Python File"
-      },
-      {
-        "name": "git add -A && git commit -m \"reset to placeholder\"",
-        "type": "Command"
-      },
-      {
-        "name": "PYTHONUTF8=1 python diagnostics/run_all.py --fast",
-        "type": "Command"
-      },
-      {
-        "name": "python main.py --repo ../ralph-test-target \"write a function that adds two numbers and returns the result, with tests\"",
-        "type": "Command"
-      },
-      {
-        "name": "Get-Content -Wait ralph_run.log",
-        "type": "Command"
-      },
-      {
-        "name": "LangGraph + Ollama + Aider",
-        "type": "Technology Stack"
-      }
-    ],
-    "relations": [
-      {
-        "subject": "Git Bash / MINGW64 shell",
-        "predicate": "shell in",
-        "object": "Claude Code"
-      },
-      {
-        "subject": "Python",
-        "predicate": "version via",
-        "object": "3.12.2 pyenv-win"
-      },
-      {
-        "subject": "RTX 3090",
-        "predicate": "VRAM for",
-        "object": "qwen25-coder-14b"
-      },
-      {
-        "subject": "Ollama",
-        "predicate": "hosted on",
-        "object": "localhost:11434"
-      },
-      {
-        "subject": "model qwen25-coder-14b:latest",
-        "predicate": "size",
-        "object": "9.7GB"
-      },
-      {
-        "subject": "Key env vars",
-        "predicate": "required for",
-        "object": "all subprocess calls"
-      },
-      {
-        "subject": "pytest",
-        "predicate": "installed in",
-        "object": "system Python 3.12.2"
-      },
-      {
-        "subject": "Gemini API key",
-        "predicate": "location",
-        "object": ".env file at repo root"
-      },
-      {
-        "subject": "LangSmith",
-        "predicate": "configured in",
-        "object": ".env"
-      }
-    ]
-  },
-  {
-    "source_file": "C:/Users/kaanchan/Projects/AI/ralph/docs/Dashboard_Walkthrough.md",
-    "token_count": 612,
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_003156_architecture_research.md",
+    "token_count": 679,
     "chunks_processed": 1,
     "entities": [
       {
         "name": "RALPH",
-        "type": "Software/Project"
-      },
-      {
-        "name": "src/state_exporter.py",
-        "type": "File"
-      },
-      {
-        "name": "src/main.py",
-        "type": "File"
-      },
-      {
-        "name": "logs/live_state.json",
-        "type": "File"
-      },
-      {
-        "name": "Terminal Dashboard (rich)",
-        "type": "Dashboard/Tool"
-      },
-      {
-        "name": "dash_rich.py",
-        "type": "File"
-      },
-      {
-        "name": "Vanilla HTML \"TV-Mode\" Dashboard",
-        "type": "Dashboard/Tool"
-      },
-      {
-        "name": "dash_html.py",
-        "type": "File"
-      },
-      {
-        "name": "Streamlit App",
-        "type": "Dashboard/Tool"
-      },
-      {
-        "name": "dash_streamlit.py",
-        "type": "File"
-      },
-      {
-        "name": "src/config.py",
-        "type": "File"
-      },
-      {
-        "name": "RALPH_VERBOSE",
-        "type": "Environment Variable"
-      },
-      {
-        "name": "litellm.set_verbose",
-        "type": "Function/Method"
-      },
-      {
-        "name": "pytest",
-        "type": "Tool/Library"
-      },
-      {
-        "name": "stdout/stderr",
-        "type": "System Output"
-      },
-      {
-        "name": "PROMPT and RESPONSE payloads",
-        "type": "Data/Log"
-      },
-      {
-        "name": "Ollama daemon",
-        "type": "Service/System"
-      },
-      {
-        "name": "logs/tools_debug.log",
-        "type": "File"
-      }
-    ],
-    "relations": [
-      {
-        "subject": "RALPH",
-        "predicate": "has implemented",
-        "object": "decoupled, 'headless backend' architecture"
-      },
-      {
-        "subject": "src/state_exporter.py",
-        "predicate": "created by",
-        "object": "author"
-      },
-      {
-        "subject": "src/main.py",
-        "predicate": "executes",
-        "object": "LangGraph loops"
-      },
-      {
-        "subject": "logs/live_state.json",
-        "predicate": "broadcasts internal state into",
-        "object": "single atomic JSON file"
-      },
-      {
-        "subject": "Terminal Dashboard (rich)",
-        "predicate": "run by",
-        "object": "python src/dash_rich.py"
-      },
-      {
-        "subject": "Vanilla HTML 'TV-Mode' Dashboard",
-        "predicate": "run by",
-        "object": "python src/dash_html.py"
-      },
-      {
-        "subject": "Streamlit App",
-        "predicate": "run by",
-        "object": "streamlit run src/dash_streamlit.py"
-      },
-      {
-        "subject": "RALPH_VERBOSE mode",
-        "predicate": "introduced in",
-        "object": "src/config.py"
-      },
-      {
-        "subject": "litellm.set_verbose",
-        "predicate": "turned on by",
-        "object": "RALPH_VERBOSE mode"
-      },
-      {
-        "subject": "pytest command arrays and stdout/stderr traces",
-        "predicate": "logged in",
-        "object": "logs/tools_debug.log"
-      },
-      {
-        "subject": "PROMPT and RESPONSE payloads",
-        "predicate": "intercepted by",
-        "object": "local Ollama daemon"
-      }
-    ]
-  },
-  {
-    "source_file": "C:/Users/kaanchan/Projects/AI/ralph/docs/dev_qa/20260508_003156_architecture_research.md",
-    "token_count": 678,
-    "chunks_processed": 1,
-    "entities": [
-      {
-        "name": "RALPH",
-        "type": "System"
+        "type": "system"
       },
       {
         "name": "LangGraph",
-        "type": "Technology/Tool"
+        "type": "orchestrator"
       },
       {
         "name": "Aider",
-        "type": "Technology/Tool"
-      },
-      {
-        "name": "Ollama",
-        "type": "Technology/Tool"
+        "type": "tool"
       },
       {
         "name": "qwen25-coder-14b",
-        "type": "Model"
+        "type": "model"
       },
       {
         "name": "Gemini",
-        "type": "Cloud Model"
+        "type": "model"
       },
       {
-        "name": "RTX 3090",
-        "type": "Hardware/GPU"
+        "name": "Ollama",
+        "type": "API"
       },
       {
         "name": "Qwen2.5-Coder-14B",
-        "type": "Model"
+        "type": "model"
       },
       {
-        "name": "Alibaba Cloud",
-        "type": "Organization"
+        "name": "RTX 3090",
+        "type": "hardware"
+      },
+      {
+        "name": "ChatML",
+        "type": "format"
+      },
+      {
+        "name": "VRAM",
+        "type": "resource"
       }
     ],
     "relations": [
       {
         "subject": "RALPH",
-        "predicate": "is building",
-        "object": "a cost-optimized, local-first recursive coding agent"
+        "predicate": "uses",
+        "object": "LangGraph"
       },
       {
         "subject": "RALPH",
         "predicate": "uses",
-        "object": "LangGraph as the orchestrating 'brain'"
+        "object": "qwen25-coder-14b"
       },
       {
         "subject": "RALPH",
-        "predicate": "tries to use",
-        "object": "a free local 14B model (qwen25-coder-14b)"
+        "predicate": "uses",
+        "object": "Ollama"
       },
       {
         "subject": "RALPH",
         "predicate": "falls back to",
-        "object": "a highly capable cloud model (Gemini) using Aider"
+        "object": "Gemini"
       },
       {
-        "subject": "Specialized tools",
-        "predicate": "act as",
-        "object": "'Tool Nodes' within the graph"
-      },
-      {
-        "subject": "Ollama",
-        "predicate": "allocates memory linearly based on",
-        "object": "the prompt size (Context Window)"
+        "subject": "qwen25-coder-14b",
+        "predicate": "uses",
+        "object": "Ollama"
       },
       {
         "subject": "Ollama",
-        "predicate": "crashes/hangs due to",
-        "object": "VRAM / KV Cache Exhaustion"
+        "predicate": "uses",
+        "object": "RTX 3090"
       },
       {
         "subject": "Qwen2.5-Coder-14B",
-        "predicate": "supports natively up to",
-        "object": "131,072 tokens"
+        "predicate": "uses",
+        "object": "ChatML"
       },
       {
         "subject": "Qwen2.5-Coder-14B",
-        "predicate": "is limited locally on a 3090 to",
-        "object": "~8k-16k tokens depending on quantization"
+        "predicate": "uses",
+        "object": "VRAM"
       },
       {
-        "subject": "Qwen2.5-Coder-14B",
-        "predicate": "expects the",
-        "object": "ChatML format"
-      },
-      {
-        "subject": "Alibaba Cloud",
-        "predicate": "strongly recommends using",
-        "object": "the exact system prompt for Qwen2.5-Coder-14B"
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "Aider"
       }
     ]
   },
   {
-    "source_file": "C:/Users/kaanchan/Projects/AI/ralph/docs/dev_qa/20260508_012257_aider_local_usecases.md",
-    "token_count": 559,
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_003156_implementation_plan.md",
+    "token_count": 936,
+    "chunks_processed": 1,
+    "entities": [
+      {
+        "name": "RALPH",
+        "type": "Project"
+      },
+      {
+        "name": "qwen25-coder-14b",
+        "type": "Model"
+      },
+      {
+        "name": "nvidia-smi",
+        "type": "Tool"
+      },
+      {
+        "name": "RTX 3090",
+        "type": "Hardware"
+      },
+      {
+        "name": "LangGraph",
+        "type": "Library"
+      },
+      {
+        "name": "Aider",
+        "type": "Library"
+      },
+      {
+        "name": "Ollama",
+        "type": "Library"
+      },
+      {
+        "name": "main.py",
+        "type": "File"
+      },
+      {
+        "name": "config.py",
+        "type": "File"
+      },
+      {
+        "name": "evaluator.py",
+        "type": "File"
+      },
+      {
+        "name": "executor.py",
+        "type": "File"
+      },
+      {
+        "name": "graph.py",
+        "type": "File"
+      },
+      {
+        "name": "memory.py",
+        "type": "VRAM"
+      },
+      {
+        "name": "router.py",
+        "type": "File"
+      },
+      {
+        "name": "runlog.py",
+        "type": "File"
+      },
+      {
+        "name": "state.py",
+        "type": "File"
+      },
+      {
+        "name": "test_gemini.py",
+        "type": "File"
+      },
+      {
+        "name": "test_langsmith.py",
+        "type": "File"
+      },
+      {
+        "name": "test_local.py",
+        "type": "File"
+      },
+      {
+        "name": "QnA_Architecture_Research.md",
+        "type": "File"
+      },
+      {
+        "name": "hardware.py",
+        "type": "File"
+      },
+      {
+        "name": "model_registry.py",
+        "type": "File"
+      },
+      {
+        "name": "diagnostics/run_all.py",
+        "type": "File"
+      },
+      {
+        "name": "HANDOFF.md",
+        "type": "File"
+      },
+      {
+        "name": "src/",
+        "type": "Directory"
+      },
+      {
+        "name": "tests/",
+        "type": "Directory"
+      },
+      {
+        "name": "prompts/",
+        "type": "File"
+      },
+      {
+        "name": "C:\\Users\\kaanchan\\Projects\\AI\\ralph-test-target\\",
+        "type": "Directory"
+      },
+      {
+        "name": "20260508_003156_gemini_plan",
+        "type": "Git Tag"
+      }
+    ],
+    "relations": [
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "nvidia-smi"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "Ollama"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "LangGraph"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "Aider"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "qwen25-coder-14b"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "main.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "config.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "evaluator.py"
+      },
+      {
+        "subject": "RALF",
+        "predicate": "uses",
+        "object": "graph.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "memory.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "router.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "runlog.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "state.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "test_gemini.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "test_langsmith.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "test_local.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "QnA_Architecture_Research.md"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "hardware.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "model_registry.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "diagnostics/run_all.py"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "HANDOFF.md"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "src/"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "tests/"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "prompts/"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "C:\\Users\\kaanchan\\Projects\\AI\\ralph-test-target\\"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "20260508_003156_gemini_plan"
+      },
+      {
+        "subject": "hardware.py",
+        "predicate": "queries",
+        "object": "nvidia-smi"
+      },
+      {
+        "subject": "hardware.py",
+        "predicate": "queries",
+        "object": "RTX 3090"
+      },
+      {
+        "subject": "executor.py",
+        "predicate": "uses",
+        "object": "hardware.py"
+      },
+      {
+        "subject": "executor.py",
+        "predicate": "uses",
+        "object": "model_registry.py"
+      },
+      {
+        "subject": "executor.py",
+        "predicate": "uses",
+        "object": "Ollama"
+      },
+      {
+        "subject": "executor.py",
+        "predicate": "uses",
+        "object": "qwen25-coder-14b"
+      },
+      {
+        "subject": "QnA_Architecture_Research.md",
+        "predicate": "contains",
+        "object": "LangGraph"
+      },
+      {
+        "subject": "QnA_Architecture_Research.md",
+        "predicate": "contains",
+        "object": "Aider"
+      },
+      {
+        "subject": "QnA_Architecture_Research.md",
+        "predicate": "contains",
+        "object": "Ollama"
+      },
+      {
+        "subject": "QnA_Archirecture_Research.md",
+        "predicate": "contains",
+        "object": "qwen25-coder-14b"
+      },
+      {
+        "subject": "QnA_Architecture_Research.md",
+        "predicate": "contains",
+        "object": "RALPH"
+      },
+      {
+        "subject": "hardware.py",
+        "predicate": "queries",
+        "object": "free_vram_mb"
+      },
+      {
+        "subject": "executor.py",
+        "predicate": "uses",
+        "object": "free_vram_mb"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "20260508_003156_gemini_plan"
+      }
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_012257_aider_local_usecases.md",
+    "token_count": 560,
     "chunks_processed": 1,
     "entities": [
       {
         "name": "Aider",
-        "type": "software/tool"
-      },
-      {
-        "name": "GPT-4o",
-        "type": "cloud model"
+        "type": "Software"
       },
       {
         "name": "Claude 3.5 Sonnet",
-        "type": "cloud model"
+        "type": "Model"
       },
       {
-        "name": "LiteLLM/Ollama",
-        "type": "software/tool"
+        "name": "GPT-4o",
+        "type": "Model"
       },
       {
-        "name": "OpenAI",
-        "type": "organization"
+        "name": "LiteLLM",
+        "type": "Software"
       },
       {
-        "name": "Google",
-        "type": "organization"
-      },
-      {
-        "name": "SOC2",
-        "type": "compliance standard"
-      },
-      {
-        "name": "HIPAA",
-        "type": "compliance standard"
-      },
-      {
-        "name": "ITAR",
-        "type": "regulation"
+        "name": "Ollama",
+        "type": "Software"
       },
       {
         "name": "RALPH",
-        "type": "software/tool/agent"
+        "type": "Software"
       },
       {
         "name": "Llama 3 70B",
-        "type": "local model"
+        "type": "Model"
       },
       {
         "name": "Qwen 32B",
-        "type": "local model"
+        "type": "Model"
       },
       {
         "name": "RTX 3090s",
-        "type": "hardware"
+        "type": "Hardware"
       },
       {
-        "name": "Mac Studio M2 Ultra",
-        "type": "hardware"
+        "name": "Mac Studio M2",
+        "type": "Hardware"
+      },
+      {
+        "name": "SOC2",
+        "type": "Standard"
+      },
+      {
+        "name": "HIPAA",
+        "type": "Standard"
+      },
+      {
+        "name": "ITAR",
+        "type": "Standard"
       }
     ],
     "relations": [
       {
         "subject": "Aider",
-        "predicate": "designed for",
-        "object": "pair-programming with developers"
+        "predicate": "designed_for",
+        "object": "pair-programming"
       },
       {
         "subject": "Aider",
         "predicate": "uses",
-        "object": "GPT-4o and Claude 3.5 Sonnet"
+        "object": "SEARCH/REPLACE diff protocol"
+      },
+      {
+        "subject": "Aider",
+        "predicate": "uses",
+        "object": "repository mapping"
+      },
+      {
+        "subject": "Aider",
+        "predicate": "uses",
+        "object": "ctags"
       },
       {
         "subject": "Aider",
         "predicate": "supports",
-        "object": "local models via LiteLLM/Ollama"
+        "object": "local models"
       },
       {
-        "subject": "open-weights models",
-        "predicate": "struggle with",
-        "object": "rigid formatting rules for safe code patching"
+        "subject": "Aider",
+        "predicate": "uses",
+        "object": "LiteLLM"
       },
       {
-        "subject": "developers",
-        "predicate": "cannot send code to",
-        "object": "OpenAI or Google"
+        "subject": "Aider",
+        "predicate": "uses",
+        "object": "Ollama"
       },
       {
-        "subject": "strict compliance rules",
-        "predicate": "include",
-        "object": "SOC2, HIPAA, ITAR"
+        "subject": "Aider",
+        "predicate": "relies_on",
+        "object": "Claude 3.5 Sonnet"
       },
       {
-        "subject": "local models",
-        "predicate": "are used for",
-        "object": "data privacy & IP protection"
+        "subject": "Aider",
+        "predicate": "relies_on",
+        "object": "GPT-4o"
       },
       {
-        "subject": "cloud model",
-        "predicate": "becomes expensive with",
-        "object": "autonomous agents running in loops"
+        "subject": "Enterprise developers",
+        "predicate": "use",
+        "object": "offline/local models"
       },
       {
-        "subject": "local models",
-        "predicate": "are fantastic at",
-        "object": "generating entirely new files or writing boilerplate from scratch"
+        "subject": "Enterprise developers",
+        "predicate": "cannot_send_to",
+        "object": "OpenAI"
       },
       {
-        "subject": "users with top-tier hardware",
-        "predicate": "can run",
-        "object": "70B+ parameter models offline"
+        "subject": "Enterprise developers",
+        "predicate": "cannot_send_to",
+        "object": "Google"
+      },
+      {
+        "subject": "Enterprise developers",
+        "predicate": "use",
+        "object": "offline/local models"
+      },
+      {
+        "subject": "Autonomous agents",
+        "predicate": "run_in_loops",
+        "object": "RALPH"
+      },
+      {
+        "subject": "RALPH",
+        "predicate": "uses",
+        "object": "local models"
+      },
+      {
+        "subject": "Local models",
+        "predicate": "are_fantastic_at",
+        "object": "whole-file generation"
+      },
+      {
+        "subject": "Local models",
+        "predicate": "fail_at",
+        "object": "surgical diffs"
+      },
+      {
+        "subject": "Local models",
+        "predicate": "can_follow",
+        "object": "Aider's formatting rules"
+      },
+      {
+        "subject": "Llama 3 70B",
+        "predicate": "can_follow",
+        "object": "Aider's formatting rules"
+      },
+      {
+        "subject": "Qwen 32B",
+        "predicate": "can_follow",
+        "object": "Aider's formatting rules"
+      },
+      {
+        "subject": "RTX 3090s",
+        "predicate": "run",
+        "object": "70B+ parameter models"
+      },
+      {
+        "subject": "Mac Studio M2",
+        "predicate": "run",
+        "object": "70B+ parameter models"
       }
     ]
   },
   {
-    "source_file": "C:/Users/kaanchan/Projects/AI/ralph/docs/dev_qa/20260508_015547_opentelemetry_vs_custom.md",
-    "token_count": 711,
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_012257_visualization_plan.md",
+    "token_count": 426,
     "chunks_processed": 1,
     "entities": [
       {
-        "name": "OpenTelemetry",
-        "type": "Technology"
+        "name": "RalphDashboard",
+        "type": "class"
       },
       {
-        "name": "Jaeger",
-        "type": "Technology"
+        "name": "RichLive",
+        "type": "class"
       },
       {
-        "name": "Zipkin",
-        "type": "Technology"
-      },
-      {
-        "name": "Grafana Tempo",
-        "type": "Technology"
-      },
-      {
-        "name": "Docker",
-        "type": "Technology"
+        "name": "LangGraph",
+        "type": "library"
       },
       {
         "name": "LangSmith",
-        "type": "Technology"
+        "type": "service"
       },
       {
-        "name": "Arize Phoenix",
-        "type": "Technology"
+        "name": "Ollama",
+        "type": "service"
       },
       {
-        "name": "Langfuse",
-        "type": "Technology"
+        "name": "runlog.py",
+        "type": "file"
       },
       {
-        "name": "LangChain",
-        "type": "Technology"
+        "name": "main.py",
+        "type": "file"
       },
       {
-        "name": "RALPH",
-        "type": "Project/Tool"
+        "name": "diagnostics/run_all.py",
+        "type": "file"
       },
       {
-        "name": "pytest",
-        "type": "Technology"
+        "name": "src/dashboard.py",
+        "type": "file"
       },
       {
-        "name": "Ollama API",
-        "type": "API"
+        "name": "src/main.py",
+        "type": "file"
       },
       {
-        "name": "aider",
-        "type": "Technology"
+        "name": "src/runlog.py",
+        "type": "rich.live.Live"
       },
       {
-        "name": "telemetry.py",
-        "type": "File/Code"
+        "name": "Header Panel",
+        "type": "panel"
       },
       {
-        "name": "Streamlit",
-        "type": "Technology"
+        "name": "Left Panel",
+        "type": "panel"
       },
       {
-        "name": "trace_live.json",
-        "type": "File/Data Format"
+        "name": "Right Panel",
+        "type": "panel"
+      },
+      {
+        "name": "Implementation Plan",
+        "type": "panel"
+      },
+      {
+        "name": "Test Output",
+        "type": "panel"
+      },
+      {
+        "name": "Ollama heartbeats",
+        "type": "log"
+      },
+      {
+        "name": "node transitions",
+        "type": "log"
+      },
+      {
+        "name": "model timeouts",
+        "type": "log"
       }
     ],
     "relations": [
       {
-        "subject": "OpenTelemetry",
-        "predicate": "is not",
-        "object": "a dashboard"
+        "subject": "RalphDashboard",
+        "predicate": "manages",
+        "object": "RichLive"
       },
       {
-        "subject": "OpenTelemetry",
-        "predicate": "requires",
-        "object": "Collector and Viewer backend"
+        "subject": "RalphDashboard",
+        "predicate": "displays",
+        "object": "Header Panel"
       },
       {
-        "subject": "Jaeger, Zipkin, Grafana Tempo",
-        "predicate": "are examples of",
-        "object": "Viewer backend"
+        "subject": "RalphDashboard",
+        "predicate": "displays",
+        "object": "Left Panel"
       },
       {
-        "subject": "OpenTelemetry",
-        "predicate": "was built for",
-        "object": "microservice latency"
+        "subject": "RaphDashboard",
+        "predicate": "displays",
+        "object": "Right Panel"
       },
       {
-        "subject": "Arize Phoenix",
+        "subject": "RalphDashboard",
+        "predicate": "uses",
+        "object": "LangGraph"
+      },
+      {
+        "subject": "RalphDashboard",
+        "predicate": "uses",
+        "object": "LangSmith"
+      },
+      {
+        "subject": "RalphDashboard",
+        "predicate": "uses",
+        "object": "Ollama"
+      },
+      {
+        "subject": "runlog.py",
+        "predicate": "enhances",
+        "object": "log"
+      },
+      {
+        "subject": "log",
+        "predicate": "broadcasts",
+        "object": "RalphDashboard"
+      },
+      {
+        "subject": "main.py",
+        "predicate": "replaces",
+        "object": "console.print"
+      },
+      {
+        "subject": "graph.stream",
+        "predicate": "wraps",
+        "object": "RichLive"
+      },
+      {
+        "subject": "graph.stream",
+        "predicate": "feeds",
+        "object": "RalphDashboard"
+      },
+      {
+        "subject": "diagnostics/run_all.py",
+        "predicate": "ensures",
+        "object": "runlog.py"
+      },
+      {
+        "subject": "main.py",
+        "predicate": "launches",
+        "object": "full-screen terminal UI"
+      },
+      {
+        "subject": "main.py",
+        "predicate": "renders",
+        "object": "panes"
+      },
+      {
+        "subject": "main.py",
+        "predicate": "streams",
+        "object": "logs"
+      }
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/architecture_roadmap.md",
+    "token_count": 1034,
+    "chunks_processed": 1,
+    "entities": [
+      {
+        "name": "Task Pod",
+        "type": "Architecture"
+      },
+      {
+        "name": "State Routing Matrix",
+        "type": "Architecture"
+      },
+      {
+        "name": "Meta-Consultant Cloud Node",
+        "type": "Architecture"
+      },
+      {
+        "name": "Hardware-Aware Calibration Node",
+        "type": "Architecture"
+      },
+      {
+        "name": "Node Library",
+        "type": "Architecture"
+      },
+      {
+        "name": "Dynamic Task Topologies",
+        "type": "Architecture"
+      },
+      {
+        "name": "Dashboard Controls",
+        "type": "Architecture"
+      },
+      {
+        "name": "Visual Graph Editor",
+        "type": "Architecture"
+      }
+    ],
+    "relations": [
+      {
+        "subject": "Task Pod",
         "predicate": "is",
-        "object": "the best offline LLM observability tool"
+        "object": "Currently Executing"
       },
       {
-        "subject": "Langfuse",
-        "predicate": "requires",
-        "object": "Docker-compose stack"
+        "subject": "Task Pod",
+        "predicate": "allows",
+        "object": "independent versioning of LangGraph configurations"
       },
       {
-        "subject": "RALPH",
-        "predicate": "does",
-        "object": "highly unusual things"
+        "subject": "Task Pod",
+        "predicate": "allows",
+        "object": "localized zoomable telemetry traces"
       },
       {
-        "subject": "telemetry.py",
-        "predicate": "is",
-        "object": "a JSON span emitter"
+        "subject": "Dashboard Registry",
+        "predicate": "writes",
+        "object": "global .ralph_registry.json"
       },
       {
-        "subject": "Streamlit app",
-        "predicate": "provides",
-        "object": "Complete Control"
+        "subject": "Dashboard Registry",
+        "predicate": "reads",
+        "object": "global .ralph_registry.json"
       },
       {
-        "subject": "trace_live.json",
-        "predicate": "is",
-        "object": "a readable JSON file"
+        "subject": "State Routing Matrix",
+        "predicate": "handles",
+        "object": "graph execution states"
+      },
+      {
+        "subject": "Meta-Consultant Cloud Node",
+        "predicate": "repurposes",
+        "object": "escalate node"
+      },
+      {
+        "subject": "Meta-Extracted",
+        "predicate": "analyzes",
+        "object": "local model's failure trace"
+      },
+      {
+        "subject": "Hardware-Aware Calibration Node",
+        "predicate": "runs",
+        "object": "before the planner"
+      },
+      {
+        "subject": "Hardware-Aware Calibration Node",
+        "predicate": "adjusts",
+        "object": "LOCAL_MODEL_TIMEOUT"
+      },
+      {
+        "subject": "Node Library",
+        "predicate": "breaks down",
+        "object": "monolithic script"
+      },
+      {
+        "subject": "Node Library",
+        "predicate": "establishes",
+        "object": "plug-and-play repository of agent behaviors"
+      },
+      {
+        "subject": "Dynamic Task Topologies",
+        "predicate": "removes",
+        "object": "hardcoded src/graph.py"
+      },
+      {
+        "subject": "Dynamic Task Topologies",
+        "predicate": "pushes",
+        "object": "LangGraph topology logic"
+      },
+      {
+        "subject": "Dashboard Controls",
+        "predicate": "communicates",
+        "object": "running LangGraph engine"
+      },
+      {
+        "subject": "Visual Graph Editor",
+        "predicate": "replaces",
+        "object": "text-only trace view"
+      },
+      {
+        "subject": "Visual Graph Editor",
+        "predicate": "shows",
+        "object": "nodes, edges, and live execution state"
+      },
+      {
+        "subject": "Visual Graph Editor",
+        "predicate": "allows",
+        "object": "add/remove nodes"
+      },
+      {
+        "subject": "Visual Graph Editor",
+        "predicate": "allows",
+        "object": "tweak custom node parameters"
       }
     ]
   }

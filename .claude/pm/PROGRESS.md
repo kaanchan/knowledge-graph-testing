@@ -1,5 +1,17 @@
 # PROGRESS
 
+## 2026-05-20 — Step 5 complete + nuextract3 pipeline + merge graph
+
+- Filled comparison-template.md with actual extraction results (Steps 1–4)
+- Downloaded numind/NuExtract3-GGUF Q4_K_M → registered as nuextract3:latest in Ollama
+- Diagnosed nuextract3 looping: fixed with format=COMBINED_SCHEMA (Ollama structured output) + think=False
+- Upgraded nuextract_pipeline.py: single-pass combined template, constrained decoding, no token cap
+- Pipeline gate: 5/5 docs, 79 entities, 106 relations on test slice
+- Built scripts/merge_graphs.py: merges Path A (graphify) + Path B (nuextract3) into unified graph
+- Output: merged-graph.json (143 nodes, 8 fused, 153 edges), merged-graph.html (D3 force viz), merged-graph-summary.md
+- User confirmed visualisation working and better than standalone graphify output
+- Issues: #5 (nuextract pipeline), #7 (Step 5 compare+decide), #8 (parent), #9 (NuExtract research)
+
 ---
 
 ## 2026-05-20 — Steps 0,1,3,4 complete; all success gates passed (issue-8-semantic-kg-extraction)

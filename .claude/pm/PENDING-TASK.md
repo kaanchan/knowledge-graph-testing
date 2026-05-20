@@ -28,7 +28,12 @@
 - [x] Registered as `nuextract3:latest` in Ollama via Modelfile
 - [x] Verified: appears in `ollama list`
 
-### Step 5 — Compare and decide (GH #7) — PENDING NuExtract 3 download
+### Step 5 — Compare and decide (GH #7) — DONE
+- [x] comparison-template.md filled with actual results
+- [x] nuextract3 downloaded, registered in Ollama, pipeline upgraded
+- [x] merge_graphs.py built: graphify + nuextract3 → merged-graph.json/html/summary.md
+- [x] Merged graph visualised and confirmed by user (143 nodes, 8 fused, 153 edges)
+- [ ] Commit + close GH #7
 Sub-tasks:
 - [ ] Read Gemini NuExtract research findings (r&d/9-nuextract-v1.5-issues/responses/gemini-NuExtract-v1.5-Documentation-Extraction-Issues.md)
       → Summarize: actual limitations, v2 status, recommended offline alternatives for 16GB VRAM
