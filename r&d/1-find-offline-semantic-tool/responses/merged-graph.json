@@ -1,0 +1,2445 @@
+{
+  "meta": {
+    "node_count": 143,
+    "edge_count": 153,
+    "layers": [
+      "code",
+      "semantic"
+    ],
+    "sources": [
+      "graphify",
+      "nuextract3"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "check_env_py",
+      "label": "check_env.py",
+      "type": "code",
+      "community": 10,
+      "source": "graphify",
+      "source_file": "check_env.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "d_model_py",
+      "label": "d_model.py",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "ralph_test_slice_d_model_ts",
+      "label": "ts()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L23"
+    },
+    {
+      "id": "ralph_test_slice_d_model_log",
+      "label": "log()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L24"
+    },
+    {
+      "id": "ralph_test_slice_d_model_ok",
+      "label": "ok()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L25"
+    },
+    {
+      "id": "ralph_test_slice_d_model_fail",
+      "label": "fail()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L26"
+    },
+    {
+      "id": "ralph_test_slice_d_model_step",
+      "label": "step()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L30"
+    },
+    {
+      "id": "ralph_test_slice_d_model_show",
+      "label": "show()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L31"
+    },
+    {
+      "id": "ralph_test_slice_d_model_chat",
+      "label": "chat()",
+      "type": "code",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L37"
+    },
+    {
+      "id": "ralph_test_slice_d_model_rationale_1",
+      "label": "D_model: Direct local model capability — no Aider, no LiteLLM.  Calls Ollama /ap",
+      "type": "rationale",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "ralph_test_slice_d_model_rationale_38",
+      "label": "POST to /api/chat, return (response_text, elapsed_seconds).",
+      "type": "rationale",
+      "community": 0,
+      "source": "graphify",
+      "source_file": "d_model.py",
+      "source_location": "L38"
+    },
+    {
+      "id": "runlog_py",
+      "label": "runlog.py",
+      "type": "code",
+      "community": 3,
+      "source": "merged",
+      "source_file": "runlog.py",
+      "source_location": "L1",
+      "label_semantic": "runlog.py",
+      "entity_type": "file"
+    },
+    {
+      "id": "ralph_test_slice_runlog_ts",
+      "label": "_ts()",
+      "type": "code",
+      "community": 3,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L15"
+    },
+    {
+      "id": "ralph_test_slice_runlog_log",
+      "label": "log()",
+      "type": "code",
+      "community": 7,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L19"
+    },
+    {
+      "id": "ralph_test_slice_runlog_reset_log",
+      "label": "reset_log()",
+      "type": "code",
+      "community": 8,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L38"
+    },
+    {
+      "id": "ralph_test_slice_runlog_log_tool",
+      "label": "log_tool()",
+      "type": "code",
+      "community": 3,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L53"
+    },
+    {
+      "id": "ralph_test_slice_runlog_ollama_ps",
+      "label": "ollama_ps()",
+      "type": "code",
+      "community": 5,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L64"
+    },
+    {
+      "id": "ralph_test_slice_runlog_loud_timeout",
+      "label": "loud_timeout()",
+      "type": "code",
+      "community": 5,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L79"
+    },
+    {
+      "id": "ralph_test_slice_runlog_rationale_1",
+      "label": "Live run log — tail-able by `Get-Content -Wait ralph_run.log` in another termina",
+      "type": "rationale",
+      "community": 3,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "ralph_test_slice_runlog_rationale_20",
+      "label": "Append a line to ralph_run.log. Best-effort — never raises on disk error.",
+      "type": "rationale",
+      "community": 7,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L20"
+    },
+    {
+      "id": "ralph_test_slice_runlog_rationale_39",
+      "label": "Truncate the log at the start of a run so it always reflects the current run.",
+      "type": "rationale",
+      "community": 8,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L39"
+    },
+    {
+      "id": "ralph_test_slice_runlog_rationale_54",
+      "label": "Logs raw tool output to tools_debug.log if RALPH_VERBOSE is true.",
+      "type": "rationale",
+      "community": 3,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L54"
+    },
+    {
+      "id": "ralph_test_slice_runlog_rationale_65",
+      "label": "Snapshot of /api/ps so timeout messages show whether the model is actually loade",
+      "type": "rationale",
+      "community": 5,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L65"
+    },
+    {
+      "id": "ralph_test_slice_runlog_rationale_80",
+      "label": "Big visible block when a timeout fires — designed to surface in a glance.",
+      "type": "rationale",
+      "community": 5,
+      "source": "graphify",
+      "source_file": "runlog.py",
+      "source_location": "L80"
+    },
+    {
+      "id": "solution_fib_py",
+      "label": "solution_fib.py",
+      "type": "code",
+      "community": 9,
+      "source": "graphify",
+      "source_file": "solution_fib.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "ralph_test_slice_solution_fib_fibonacci",
+      "label": "fibonacci()",
+      "type": "code",
+      "community": 9,
+      "source": "graphify",
+      "source_file": "solution_fib.py",
+      "source_location": "L3"
+    },
+    {
+      "id": "topology_py",
+      "label": "topology.py",
+      "type": "code",
+      "community": 1,
+      "source": "graphify",
+      "source_file": "topology.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "ralph_test_slice_topology_wrap_node",
+      "label": "wrap_node()",
+      "type": "code",
+      "community": 1,
+      "source": "merged",
+      "source_file": "topology.py",
+      "source_location": "L19",
+      "label_semantic": "RALPH",
+      "entity_type": "Software"
+    },
+    {
+      "id": "ralph_test_slice_topology_escalate_node",
+      "label": "escalate_node()",
+      "type": "code",
+      "community": 1,
+      "source": "graphify",
+      "source_file": "topology.py",
+      "source_location": "L27"
+    },
+    {
+      "id": "ralph_test_slice_topology_build_graph",
+      "label": "build_graph()",
+      "type": "code",
+      "community": 1,
+      "source": "graphify",
+      "source_file": "topology.py",
+      "source_location": "L36"
+    },
+    {
+      "id": "ralph_test_slice_topology_rationale_1",
+      "label": "Dynamic topology loader for RALPH (Meta Test). Loads graph structure from graph.",
+      "type": "rationale",
+      "community": 1,
+      "source": "graphify",
+      "source_file": "topology.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "ralph_test_slice_topology_rationale_28",
+      "label": "Flip the escalated flag so subsequent calls use the cloud model.",
+      "type": "rationale",
+      "community": 1,
+      "source": "graphify",
+      "source_file": "topology.py",
+      "source_location": "L28"
+    },
+    {
+      "id": "architecture_research_ralph",
+      "label": "RALPH Architecture & State of the Art",
+      "type": "document",
+      "community": 2,
+      "source": "graphify",
+      "source_file": "20260508_003156_architecture_research.md",
+      "source_location": null
+    },
+    {
+      "id": "architecture_research_langgraph",
+      "label": "LangGraph",
+      "type": "concept",
+      "community": 2,
+      "source": "merged",
+      "source_file": "20260508_003156_architecture_research.md",
+      "source_location": null,
+      "label_semantic": "LangGraph",
+      "entity_type": "library"
+    },
+    {
+      "id": "architecture_research_aider",
+      "label": "Aider",
+      "type": "concept",
+      "community": 2,
+      "source": "merged",
+      "source_file": "20260508_003156_architecture_research.md",
+      "source_location": null,
+      "label_semantic": "Aider",
+      "entity_type": "Software"
+    },
+    {
+      "id": "architecture_research_ollama",
+      "label": "Ollama",
+      "type": "concept",
+      "community": 2,
+      "source": "merged",
+      "source_file": "20260508_003156_architecture_research.md",
+      "source_location": null,
+      "label_semantic": "Ollama",
+      "entity_type": "service"
+    },
+    {
+      "id": "implementation_plan_ralph",
+      "label": "RALPH Refactoring & Capability Profiling Plan",
+      "type": "document",
+      "community": 4,
+      "source": "graphify",
+      "source_file": "20260508_003156_implementation_plan.md",
+      "source_location": null
+    },
+    {
+      "id": "implementation_plan_src",
+      "label": "src directory",
+      "type": "code",
+      "community": 4,
+      "source": "merged",
+      "source_file": "20260508_003156_implementation_plan.md",
+      "source_location": null,
+      "label_semantic": "src/",
+      "entity_type": "Directory"
+    },
+    {
+      "id": "implementation_plan_tests",
+      "label": "tests directory",
+      "type": "code",
+      "community": 4,
+      "source": "merged",
+      "source_file": "20260508_003156_implementation_plan.md",
+      "source_location": null,
+      "label_semantic": "Implementation Plan",
+      "entity_type": "panel"
+    },
+    {
+      "id": "implementation_plan_prompts",
+      "label": "prompts directory",
+      "type": "code",
+      "community": 4,
+      "source": "merged",
+      "source_file": "20260508_003156_implementation_plan.md",
+      "source_location": null,
+      "label_semantic": "prompts/",
+      "entity_type": "File"
+    },
+    {
+      "id": "aider_local_usecases_aider",
+      "label": "Aider Offline Use Cases",
+      "type": "document",
+      "community": 2,
+      "source": "graphify",
+      "source_file": "20260508_012257_aider_local_usecases.md",
+      "source_location": null
+    },
+    {
+      "id": "visualization_plan_dashboard",
+      "label": "Offline Observability & TV-Mode Visualization Layer",
+      "type": "document",
+      "community": 6,
+      "source": "graphify",
+      "source_file": "20260508_012257_visualization_plan.md",
+      "source_location": null
+    },
+    {
+      "id": "architecture_roadmap_ralph",
+      "label": "RALPH Architecture & Evolution Roadmap",
+      "type": "document",
+      "community": 6,
+      "source": "graphify",
+      "source_file": "architecture_roadmap.md",
+      "source_location": null
+    },
+    {
+      "id": "qwen25_coder_14b",
+      "label": "qwen25-coder-14b",
+      "type": "model",
+      "community": 11,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "id": "gemini",
+      "label": "Gemini",
+      "type": "model",
+      "community": 11,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "id": "qwen2_5_coder_14b",
+      "label": "Qwen2.5-Coder-14B",
+      "type": "model",
+      "community": 11,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "id": "rtx_3090",
+      "label": "RTX 3090",
+      "type": "hardware",
+      "community": 11,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "id": "chatml",
+      "label": "ChatML",
+      "type": "format",
+      "community": 11,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "id": "vram",
+      "label": "VRAM",
+      "type": "resource",
+      "community": 11,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "id": "nvidia_smi",
+      "label": "nvidia-smi",
+      "type": "Tool",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "main_py",
+      "label": "main.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "config_py",
+      "label": "config.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "evaluator_py",
+      "label": "evaluator.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "executor_py",
+      "label": "executor.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "graph_py",
+      "label": "graph.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "memory_py",
+      "label": "memory.py",
+      "type": "VRAM",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "router_py",
+      "label": "router.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "state_py",
+      "label": "state.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "test_gemini_py",
+      "label": "test_gemini.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "test_langsmith_py",
+      "label": "test_langsmith.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "test_local_py",
+      "label": "test_local.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "qna_architecture_research_md",
+      "label": "QnA_Architecture_Research.md",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "hardware_py",
+      "label": "hardware.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "model_registry_py",
+      "label": "model_registry.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "diagnostics_run_all_py",
+      "label": "diagnostics/run_all.py",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "handoff_md",
+      "label": "HANDOFF.md",
+      "type": "File",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "c_users_kaanchan_projects_ai_ralph_test_target",
+      "label": "C:\\Users\\kaanchan\\Projects\\AI\\ralph-test-target\\",
+      "type": "Directory",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "20260508_003156_gemini_plan",
+      "label": "20260508_003156_gemini_plan",
+      "type": "Git Tag",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "claude_3_5_sonnet",
+      "label": "Claude 3.5 Sonnet",
+      "type": "Model",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "gpt_4o",
+      "label": "GPT-4o",
+      "type": "Model",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "litellm",
+      "label": "LiteLLM",
+      "type": "Software",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "llama_3_70b",
+      "label": "Llama 3 70B",
+      "type": "Model",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "qwen_32b",
+      "label": "Qwen 32B",
+      "type": "Model",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "rtx_3090s",
+      "label": "RTX 3090s",
+      "type": "Hardware",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "mac_studio_m2",
+      "label": "Mac Studio M2",
+      "type": "Hardware",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "soc2",
+      "label": "SOC2",
+      "type": "Standard",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "hipaa",
+      "label": "HIPAA",
+      "type": "Standard",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "itar",
+      "label": "ITAR",
+      "type": "Standard",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "ralphdashboard",
+      "label": "RalphDashboard",
+      "type": "class",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "richlive",
+      "label": "RichLive",
+      "type": "class",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "langsmith",
+      "label": "LangSmith",
+      "type": "service",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "src_dashboard_py",
+      "label": "src/dashboard.py",
+      "type": "file",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "src_main_py",
+      "label": "src/main.py",
+      "type": "file",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "src_runlog_py",
+      "label": "src/runlog.py",
+      "type": "rich.live.Live",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "header_panel",
+      "label": "Header Panel",
+      "type": "panel",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "left_panel",
+      "label": "Left Panel",
+      "type": "panel",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "right_panel",
+      "label": "Right Panel",
+      "type": "panel",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "test_output",
+      "label": "Test Output",
+      "type": "panel",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "ollama_heartbeats",
+      "label": "Ollama heartbeats",
+      "type": "log",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "node_transitions",
+      "label": "node transitions",
+      "type": "log",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "model_timeouts",
+      "label": "model timeouts",
+      "type": "log",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "task_pod",
+      "label": "Task Pod",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "state_routing_matrix",
+      "label": "State Routing Matrix",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "meta_consultant_cloud_node",
+      "label": "Meta-Consultant Cloud Node",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "hardware_aware_calibration_node",
+      "label": "Hardware-Aware Calibration Node",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "node_library",
+      "label": "Node Library",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "dynamic_task_topologies",
+      "label": "Dynamic Task Topologies",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "dashboard_controls",
+      "label": "Dashboard Controls",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "visual_graph_editor",
+      "label": "Visual Graph Editor",
+      "type": "Architecture",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "ralf",
+      "label": "RALF",
+      "type": "concept",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "qna_archirecture_research_md",
+      "label": "QnA_Archirecture_Research.md",
+      "type": "concept",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "free_vram_mb",
+      "label": "free_vram_mb",
+      "type": "concept",
+      "community": 12,
+      "source": "nuextract3",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "id": "pair_programming",
+      "label": "pair-programming",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "search_replace_diff_protocol",
+      "label": "SEARCH/REPLACE diff protocol",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "repository_mapping",
+      "label": "repository mapping",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "ctags",
+      "label": "ctags",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "local_models",
+      "label": "local models",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "enterprise_developers",
+      "label": "Enterprise developers",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "offline_local_models",
+      "label": "offline/local models",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "openai",
+      "label": "OpenAI",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "google",
+      "label": "Google",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "autonomous_agents",
+      "label": "Autonomous agents",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "whole_file_generation",
+      "label": "whole-file generation",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "surgical_diffs",
+      "label": "surgical diffs",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "aider_s_formatting_rules",
+      "label": "Aider's formatting rules",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "70b_parameter_models",
+      "label": "70B+ parameter models",
+      "type": "concept",
+      "community": 13,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "id": "raphdashboard",
+      "label": "RaphDashboard",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "log",
+      "label": "log",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "console_print",
+      "label": "console.print",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "graph_stream",
+      "label": "graph.stream",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "full_screen_terminal_ui",
+      "label": "full-screen terminal UI",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "panes",
+      "label": "panes",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "logs",
+      "label": "logs",
+      "type": "concept",
+      "community": 14,
+      "source": "nuextract3",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "id": "currently_executing",
+      "label": "Currently Executing",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "independent_versioning_of_langgraph_configurations",
+      "label": "independent versioning of LangGraph configurations",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "localized_zoomable_telemetry_traces",
+      "label": "localized zoomable telemetry traces",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "dashboard_registry",
+      "label": "Dashboard Registry",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "global_ralph_registry_json",
+      "label": "global .ralph_registry.json",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "graph_execution_states",
+      "label": "graph execution states",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "escalate_node",
+      "label": "escalate node",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "meta_extracted",
+      "label": "Meta-Extracted",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "local_model_s_failure_trace",
+      "label": "local model's failure trace",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "before_the_planner",
+      "label": "before the planner",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "local_model_timeout",
+      "label": "LOCAL_MODEL_TIMEOUT",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "monolithic_script",
+      "label": "monolithic script",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "plug_and_play_repository_of_agent_behaviors",
+      "label": "plug-and-play repository of agent behaviors",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "hardcoded_src_graph_py",
+      "label": "hardcoded src/graph.py",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "langgraph_topology_logic",
+      "label": "LangGraph topology logic",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "running_langgraph_engine",
+      "label": "running LangGraph engine",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "text_only_trace_view",
+      "label": "text-only trace view",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "nodes_edges_and_live_execution_state",
+      "label": "nodes, edges, and live execution state",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "add_remove_nodes",
+      "label": "add/remove nodes",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "id": "tweak_custom_node_parameters",
+      "label": "tweak custom node parameters",
+      "type": "concept",
+      "community": 15,
+      "source": "nuextract3",
+      "source_file": "architecture_roadmap.md"
+    }
+  ],
+  "edges": [
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_ts",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_log",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_ok",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_fail",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_step",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_show",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "d_model_py",
+      "target": "ralph_test_slice_d_model_chat",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_rationale_1",
+      "target": "d_model_py",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_ok",
+      "target": "ralph_test_slice_d_model_ts",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_fail",
+      "target": "ralph_test_slice_d_model_ts",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_step",
+      "target": "ralph_test_slice_d_model_ts",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_ok",
+      "target": "ralph_test_slice_d_model_log",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_fail",
+      "target": "ralph_test_slice_d_model_log",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_step",
+      "target": "ralph_test_slice_d_model_log",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_show",
+      "target": "ralph_test_slice_d_model_log",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "ralph_test_slice_d_model_rationale_38",
+      "target": "ralph_test_slice_d_model_chat",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "d_model.py"
+    },
+    {
+      "source": "runlog_py",
+      "target": "ralph_test_slice_runlog_ts",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "runlog_py",
+      "target": "ralph_test_slice_runlog_log",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "runlog_py",
+      "target": "ralph_test_slice_runlog_reset_log",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "runlog_py",
+      "target": "ralph_test_slice_runlog_log_tool",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "runlog_py",
+      "target": "ralph_test_slice_runlog_ollama_ps",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "runlog_py",
+      "target": "ralph_test_slice_runlog_loud_timeout",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_rationale_1",
+      "target": "runlog_py",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_log",
+      "target": "ralph_test_slice_runlog_ts",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_log_tool",
+      "target": "ralph_test_slice_runlog_ts",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_loud_timeout",
+      "target": "ralph_test_slice_runlog_log",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_rationale_20",
+      "target": "ralph_test_slice_runlog_log",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_rationale_39",
+      "target": "ralph_test_slice_runlog_reset_log",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_rationale_54",
+      "target": "ralph_test_slice_runlog_log_tool",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_loud_timeout",
+      "target": "ralph_test_slice_runlog_ollama_ps",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_rationale_65",
+      "target": "ralph_test_slice_runlog_ollama_ps",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "ralph_test_slice_runlog_rationale_80",
+      "target": "ralph_test_slice_runlog_loud_timeout",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "runlog.py"
+    },
+    {
+      "source": "solution_fib_py",
+      "target": "ralph_test_slice_solution_fib_fibonacci",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "solution_fib.py"
+    },
+    {
+      "source": "topology_py",
+      "target": "ralph_test_slice_topology_wrap_node",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "topology.py"
+    },
+    {
+      "source": "topology_py",
+      "target": "ralph_test_slice_topology_escalate_node",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "topology.py"
+    },
+    {
+      "source": "topology_py",
+      "target": "ralph_test_slice_topology_build_graph",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "topology.py"
+    },
+    {
+      "source": "ralph_test_slice_topology_rationale_1",
+      "target": "topology_py",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "topology.py"
+    },
+    {
+      "source": "ralph_test_slice_topology_build_graph",
+      "target": "ralph_test_slice_topology_wrap_node",
+      "relation": "calls",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "topology.py"
+    },
+    {
+      "source": "ralph_test_slice_topology_rationale_28",
+      "target": "ralph_test_slice_topology_escalate_node",
+      "relation": "rationale_for",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "topology.py"
+    },
+    {
+      "source": "architecture_research_ralph",
+      "target": "architecture_research_langgraph",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "architecture_research_ralph",
+      "target": "architecture_research_aider",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "architecture_research_ralph",
+      "target": "architecture_research_ollama",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "aider_local_usecases_aider",
+      "target": "architecture_research_aider",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "implementation_plan_ralph",
+      "target": "implementation_plan_src",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "implementation_plan_ralph",
+      "target": "implementation_plan_tests",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "implementation_plan_ralph",
+      "target": "implementation_plan_prompts",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "visualization_plan_dashboard",
+      "target": "architecture_roadmap_ralph",
+      "relation": "references",
+      "weight": 1.0,
+      "layer": "code",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "architecture_research_langgraph",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "qwen25_coder_14b",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "architecture_research_ollama",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "gemini",
+      "relation": "falls back to",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "qwen25_coder_14b",
+      "target": "architecture_research_ollama",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "architecture_research_ollama",
+      "target": "rtx_3090",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "qwen2_5_coder_14b",
+      "target": "chatml",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "qwen2_5_coder_14b",
+      "target": "vram",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "architecture_research_aider",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_architecture_research.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "nvidia_smi",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "architecture_research_ollama",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "architecture_research_langgraph",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "architecture_research_aider",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "qwen25_coder_14b",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "main_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "config_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "evaluator_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralf",
+      "target": "graph_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "memory_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "router_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "runlog_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "state_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "test_gemini_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "test_langsmith_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "test_local_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "qna_architecture_research_md",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "hardware_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "model_registry_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "diagnostics_run_all_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "handoff_md",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "implementation_plan_src",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "implementation_plan_tests",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "implementation_plan_prompts",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "c_users_kaanchan_projects_ai_ralph_test_target",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "20260508_003156_gemini_plan",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "hardware_py",
+      "target": "nvidia_smi",
+      "relation": "queries",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "hardware_py",
+      "target": "rtx_3090",
+      "relation": "queries",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "executor_py",
+      "target": "hardware_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "executor_py",
+      "target": "model_registry_py",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "executor_py",
+      "target": "architecture_research_ollama",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "executor_py",
+      "target": "qwen25_coder_14b",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "qna_architecture_research_md",
+      "target": "architecture_research_langgraph",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "qna_architecture_research_md",
+      "target": "architecture_research_aider",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "qna_architecture_research_md",
+      "target": "architecture_research_ollama",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "qna_archirecture_research_md",
+      "target": "qwen25_coder_14b",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "qna_architecture_research_md",
+      "target": "ralph_test_slice_topology_wrap_node",
+      "relation": "contains",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "hardware_py",
+      "target": "free_vram_mb",
+      "relation": "queries",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "executor_py",
+      "target": "free_vram_mb",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "20260508_003156_gemini_plan",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_003156_implementation_plan.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "pair_programming",
+      "relation": "designed_for",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "search_replace_diff_protocol",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "repository_mapping",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "ctags",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "local_models",
+      "relation": "supports",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "litellm",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "architecture_research_ollama",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "claude_3_5_sonnet",
+      "relation": "relies_on",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "architecture_research_aider",
+      "target": "gpt_4o",
+      "relation": "relies_on",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "enterprise_developers",
+      "target": "offline_local_models",
+      "relation": "use",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "enterprise_developers",
+      "target": "openai",
+      "relation": "cannot_send_to",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "enterprise_developers",
+      "target": "google",
+      "relation": "cannot_send_to",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "enterprise_developers",
+      "target": "offline_local_models",
+      "relation": "use",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "autonomous_agents",
+      "target": "ralph_test_slice_topology_wrap_node",
+      "relation": "run_in_loops",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "ralph_test_slice_topology_wrap_node",
+      "target": "local_models",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "local_models",
+      "target": "whole_file_generation",
+      "relation": "are_fantastic_at",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "local_models",
+      "target": "surgical_diffs",
+      "relation": "fail_at",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "local_models",
+      "target": "aider_s_formatting_rules",
+      "relation": "can_follow",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "llama_3_70b",
+      "target": "aider_s_formatting_rules",
+      "relation": "can_follow",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "qwen_32b",
+      "target": "aider_s_formatting_rules",
+      "relation": "can_follow",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "rtx_3090s",
+      "target": "70b_parameter_models",
+      "relation": "run",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "mac_studio_m2",
+      "target": "70b_parameter_models",
+      "relation": "run",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_aider_local_usecases.md"
+    },
+    {
+      "source": "ralphdashboard",
+      "target": "richlive",
+      "relation": "manages",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "ralphdashboard",
+      "target": "header_panel",
+      "relation": "displays",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "ralphdashboard",
+      "target": "left_panel",
+      "relation": "displays",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "raphdashboard",
+      "target": "right_panel",
+      "relation": "displays",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "ralphdashboard",
+      "target": "architecture_research_langgraph",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "ralphdashboard",
+      "target": "langsmith",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "ralphdashboard",
+      "target": "architecture_research_ollama",
+      "relation": "uses",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "runlog_py",
+      "target": "log",
+      "relation": "enhances",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "log",
+      "target": "ralphdashboard",
+      "relation": "broadcasts",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "main_py",
+      "target": "console_print",
+      "relation": "replaces",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "graph_stream",
+      "target": "richlive",
+      "relation": "wraps",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "graph_stream",
+      "target": "ralphdashboard",
+      "relation": "feeds",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "diagnostics_run_all_py",
+      "target": "runlog_py",
+      "relation": "ensures",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "main_py",
+      "target": "full_screen_terminal_ui",
+      "relation": "launches",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "main_py",
+      "target": "panes",
+      "relation": "renders",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "main_py",
+      "target": "logs",
+      "relation": "streams",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "20260508_012257_visualization_plan.md"
+    },
+    {
+      "source": "task_pod",
+      "target": "currently_executing",
+      "relation": "is",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "task_pod",
+      "target": "independent_versioning_of_langgraph_configurations",
+      "relation": "allows",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "task_pod",
+      "target": "localized_zoomable_telemetry_traces",
+      "relation": "allows",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "dashboard_registry",
+      "target": "global_ralph_registry_json",
+      "relation": "writes",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "dashboard_registry",
+      "target": "global_ralph_registry_json",
+      "relation": "reads",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "state_routing_matrix",
+      "target": "graph_execution_states",
+      "relation": "handles",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "meta_consultant_cloud_node",
+      "target": "escalate_node",
+      "relation": "repurposes",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "meta_extracted",
+      "target": "local_model_s_failure_trace",
+      "relation": "analyzes",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "hardware_aware_calibration_node",
+      "target": "before_the_planner",
+      "relation": "runs",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "hardware_aware_calibration_node",
+      "target": "local_model_timeout",
+      "relation": "adjusts",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "node_library",
+      "target": "monolithic_script",
+      "relation": "breaks down",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "node_library",
+      "target": "plug_and_play_repository_of_agent_behaviors",
+      "relation": "establishes",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "dynamic_task_topologies",
+      "target": "hardcoded_src_graph_py",
+      "relation": "removes",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "dynamic_task_topologies",
+      "target": "langgraph_topology_logic",
+      "relation": "pushes",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "dashboard_controls",
+      "target": "running_langgraph_engine",
+      "relation": "communicates",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "visual_graph_editor",
+      "target": "text_only_trace_view",
+      "relation": "replaces",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "visual_graph_editor",
+      "target": "nodes_edges_and_live_execution_state",
+      "relation": "shows",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "visual_graph_editor",
+      "target": "add_remove_nodes",
+      "relation": "allows",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    },
+    {
+      "source": "visual_graph_editor",
+      "target": "tweak_custom_node_parameters",
+      "relation": "allows",
+      "weight": 1.0,
+      "layer": "semantic",
+      "source_file": "architecture_roadmap.md"
+    }
+  ]
+}

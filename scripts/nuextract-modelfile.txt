@@ -1,0 +1,2 @@
+FROM iodose/nuextract-v1.5
+PARAMETER num_ctx 16384

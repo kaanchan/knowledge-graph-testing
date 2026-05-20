@@ -1,0 +1,1113 @@
+[
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_003156_architecture_research.md",
+    "token_count": 679,
+    "chunks_processed": 1,
+    "entities": [
+      "VRAM / KV Cache Exhaustion",
+      "cloud model",
+      "diff formats",
+      "structured Aider/Git diff formats",
+      "client socket timeout",
+      "sub-tasks",
+      "hybrid cost-saving agents",
+      "generation speed",
+      "Context Window",
+      "Aider",
+      "PCIe bus",
+      "file writing",
+      "quantization",
+      "ChatML format",
+      "test_solution.py",
+      "VRAM",
+      "Gemini",
+      "GPU's VRAM",
+      "Tool Nodes",
+      "LangGraph",
+      "Alibaba Cloud",
+      "multi-file diffs",
+      "Ollama API call",
+      "Model Weights + KV Cache",
+      "8k-16k tokens",
+      "complex file manipulation",
+      "3090",
+      "conditional edge fallback",
+      "131,072 tokens",
+      "local-first recursive coding agent",
+      "Plan -> Execute -> Evaluate -> Loop",
+      "num_ctx",
+      "Qwen2.5-Coder-14B",
+      "qwen25-coder-14b",
+      "RALPH",
+      "whole-file generation",
+      "system RAM",
+      "solution.py",
+      "cost-optimized",
+      "attention degradation",
+      "industry best practices"
+    ],
+    "edges": [
+      "is building",
+      "employs conditional edge fallback to",
+      "is limited to ~8k-16k tokens on a 3090 depending on",
+      "spills to",
+      "aligns with",
+      "warns against forcing local 14B models to output",
+      "tries to use",
+      "drops from ~30 tokens/sec to ~1 token/sec",
+      "exceeds",
+      "act as",
+      "expects the ChatML format",
+      "struggles with",
+      "strongly recommends using the exact system prompt for Qwen2.5-Coder-14B",
+      "falls back to",
+      "is used for",
+      "supports natively up to",
+      "uses",
+      "is caused by",
+      "allocates memory linearly based on",
+      "should never write code itself",
+      "is excellent at",
+      "orchestrates"
+    ],
+    "relations": [
+      [
+        "Alibaba Cloud",
+        "strongly recommends using the exact system prompt for Qwen2.5-Coder-14B",
+        "\"You are Qwen, created by Alibaba Cloud. You are a helpful assistant.\""
+      ],
+      [
+        "RALPH",
+        "uses",
+        "LangGraph"
+      ],
+      [
+        "Ollama",
+        "spills to",
+        "system RAM over the PCIe bus"
+      ],
+      [
+        "Qwen2.5-Coder-14B",
+        "is limited to ~8k-16k tokens on a 3090 depending on",
+        "quantization"
+      ],
+      [
+        "Qwen2.5-Coder-14B",
+        "struggles with",
+        "multi-file diffs and attention degradation"
+      ],
+      [
+        "RALPH",
+        "falls back to",
+        "Gemini using Aider"
+      ],
+      [
+        "Qwen2.5-Coder-14B",
+        "supports natively up to",
+        "131,072 tokens"
+      ],
+      [
+        "hanging in Ollama",
+        "is caused by",
+        "VRAM / KV Cache Exhaustion"
+      ],
+      [
+        "Qwen2.5-Coder-14B",
+        "is excellent at",
+        "whole-file generation"
+      ],
+      [
+        "Model Weights + KV Cache",
+        "exceeds",
+        "GPU's VRAM"
+      ],
+      [
+        "RALPH",
+        "uses",
+        "whole-file generation as a workaround"
+      ],
+      [
+        "RALPH",
+        "tries to use",
+        "qwen25-coder-14b via Ollama API call for file writing"
+      ],
+      [
+        "Gemini",
+        "is used for",
+        "complex file manipulation"
+      ],
+      [
+        "architecture of RALPH",
+        "aligns with",
+        "industry best practices"
+      ],
+      [
+        "Qwen2.5-Coder-14B",
+        "expects the ChatML format",
+        ""
+      ],
+      [
+        "generation speed in Ollama",
+        "drops from ~30 tokens/sec to ~1 token/sec",
+        ""
+      ],
+      [
+        "community",
+        "warns against forcing local 14B models to output",
+        "structured Aider/Git diff formats"
+      ],
+      [
+        "RALPH",
+        "is building",
+        "cost-optimized, local-first recursive coding agent"
+      ],
+      [
+        "LangGraph",
+        "should never write code itself",
+        ""
+      ],
+      [
+        "Specialized tools like Aider",
+        "act as",
+        "Tool Nodes within the graph"
+      ],
+      [
+        "RALPH",
+        "employs conditional edge fallback to",
+        "cloud model on failure"
+      ],
+      [
+        "Ollama",
+        "allocates memory linearly based on",
+        "prompt size (Context Window)"
+      ],
+      [
+        "LangGraph",
+        "orchestrates",
+        "Plan -> Execute -> Evaluate -> Loop"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_003156_implementation_plan.md",
+    "token_count": 936,
+    "chunks_processed": 1,
+    "entities": [
+      "nvidia-smi",
+      "tests/",
+      "graph.py",
+      "Ollama API",
+      "C:\\Users\\kaanchan\\Projects\\AI\\ralph-test-target\\",
+      "runlog.py",
+      "User Review Required",
+      "test_local.py",
+      "Git tag 20260508_003156_gemini_plan",
+      "main.py",
+      "config.py",
+      "RALPH Refactoring & Capability Profiling Plan",
+      "num_ctx (Context Window)",
+      "test_solution.py",
+      "RTX 3090",
+      "_LOCAL_SYSTEM",
+      "test_langsmith.py",
+      "HANDOFF.md",
+      "src/",
+      "supports_aider_diff",
+      "state.py",
+      "test_gemini.py",
+      "docs/QnA_Architecture_Research.md",
+      "router.py",
+      "Aider string prompts",
+      "diagnostics/run_all.py",
+      "optimal_temperature",
+      "src/hardware.py",
+      "evaluator.py",
+      "python main.py --repo ../ralph-test-target",
+      "python src/main.py --help",
+      "src/model_registry.py",
+      "system_prompt",
+      "qwen25-coder-14b",
+      "prompts/ directory",
+      "solution.py",
+      "executor.py",
+      "memory.py",
+      "base_vram_mb"
+    ],
+    "edges": [
+      "is located at",
+      "executes",
+      "is used in"
+    ],
+    "relations": [
+      [
+        "src/hardware.py",
+        "executes",
+        "nvidia-smi"
+      ],
+      [
+        "test_solution.py",
+        "is located at",
+        "C:\\Users\\kaanchan\\Projects\\AI\\ralph-test-target\\"
+      ],
+      [
+        "solution.py",
+        "is located at",
+        "C:\\Users\\kaanchan\\Projects\\AI\\ralph-test-target\\"
+      ],
+      [
+        "python main.py --repo ../ralph-test-target",
+        "is used in",
+        "HANDOFF.md"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_012257_aider_local_usecases.md",
+    "token_count": 560,
+    "chunks_processed": 1,
+    "entities": [
+      "line 45",
+      "dual RTX 3090s",
+      "developers",
+      "top-tier hardware",
+      "cloud model",
+      "boilerplate",
+      "surgical diffs",
+      "open-weights models",
+      "70B+ parameter models",
+      "Aider",
+      "70B parameter models",
+      "interactive prompts",
+      "proprietary algorithms",
+      "LiteLLM/Ollama",
+      "ITAR",
+      "terminal",
+      "repository mapping",
+      "enterprise developers",
+      "SOC2",
+      "ctags",
+      "defense contracts",
+      "healthcare data",
+      "autonomous agents",
+      "real world users",
+      "Mac Studio M2 Ultras",
+      "SEARCH/REPLACE diff protocol",
+      "Claude 3.5 Sonnet (cost)",
+      "cloud LLM",
+      "<14B models",
+      "local models",
+      "OpenAI",
+      "new files",
+      "Google",
+      "HIPAA",
+      "RALPH",
+      "line 46",
+      "standard consumer hardware",
+      "Claude 3.5 Sonnet",
+      "GPT-4o",
+      "cloud models"
+    ],
+    "edges": [
+      "can edit",
+      "cannot send their code to",
+      "lies in",
+      "rely on",
+      "can run",
+      "supports",
+      "was originally designed for",
+      "are 'free' to loop infinitely",
+      "must run models",
+      "is mostly specific to",
+      "are cheap",
+      "leverages",
+      "run in loops",
+      "fail at",
+      "struggle with",
+      "can follow",
+      "uses",
+      "are fantastic at generating"
+    ],
+    "relations": [
+      [
+        "Aider's core magic",
+        "lies in",
+        "SEARCH/REPLACE diff protocol and repository mapping"
+      ],
+      [
+        "formatting issue",
+        "is mostly specific to",
+        "<14B models that fit on standard consumer hardware"
+      ],
+      [
+        "open-weights models",
+        "struggle with",
+        "rigid formatting rules required for safe code patching"
+      ],
+      [
+        "enterprise developers",
+        "must run models",
+        "offline"
+      ],
+      [
+        "Users with top-tier hardware",
+        "can run",
+        "70B+ parameter models offline"
+      ],
+      [
+        "Local models",
+        "are fantastic at generating",
+        "entirely new files or writing boilerplate from scratch"
+      ],
+      [
+        "local models",
+        "are 'free' to loop infinitely",
+        ""
+      ],
+      [
+        "repository mapping",
+        "uses",
+        "ctags"
+      ],
+      [
+        "real world users of Aider",
+        "rely on",
+        "Claude 3.5 Sonnet or GPT-4o"
+      ],
+      [
+        "Local models",
+        "fail at",
+        "surgical diffs (e.g., finding line 45 and replacing it with line 46)"
+      ],
+      [
+        "autonomous agents (like RALPH)",
+        "run in loops",
+        ""
+      ],
+      [
+        "Aider",
+        "supports",
+        "local models via LiteLLM/Ollama"
+      ],
+      [
+        "Aider",
+        "leverages",
+        "frontier cloud models (like GPT-4o and Claude 3.5 Sonnet)"
+      ],
+      [
+        "enterprise developers",
+        "cannot send their code to",
+        "OpenAI or Google due to strict compliance rules (SOC2, HIPAA, ITAR)"
+      ],
+      [
+        "larger local models",
+        "can follow",
+        "Aider's formatting rules effectively"
+      ],
+      [
+        "Aider",
+        "was originally designed for",
+        "pair-programming with developers directly in their terminal"
+      ],
+      [
+        "single interactive prompts to a cloud model",
+        "are cheap",
+        ""
+      ],
+      [
+        "cloud LLM",
+        "can edit",
+        "complex, multi-file codebases flawlessly"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/20260508_012257_visualization_plan.md",
+    "token_count": 426,
+    "chunks_processed": 1,
+    "entities": [
+      "panes",
+      "LangGraph loop",
+      "headless diagnostic execution",
+      "Right Panel (Live Logs)",
+      "Issue #1",
+      "update_logs(entries)",
+      "real-time UI updates",
+      "console.print() loop",
+      "real-time offline observability",
+      "Ollama heartbeats",
+      "LangGraph execution loop",
+      "python src/main.py --repo ../ralph-test-target \"write a python function to check if a string is a palindrome\"",
+      "full-screen terminal UI",
+      "Header Panel",
+      "Implementation Plan",
+      "runlog.py logic",
+      "src/dashboard.py",
+      "task",
+      "RalphDashboard class",
+      "Layout Construction",
+      "Left Panel (State)",
+      "graph.stream(...)",
+      "logs",
+      "Dashboard instance",
+      "terminal-native",
+      "Visual Smoke Test",
+      "`rich` library",
+      "node transitions",
+      "Loop Iteration",
+      "Live context",
+      "callback registry",
+      "target repo",
+      "Test Output",
+      "long-running subprocesses",
+      "full-screen dashboard",
+      "cloud service like LangSmith",
+      "src/main.py",
+      "Automated Diagnostics",
+      "log() function",
+      "python diagnostics/run_all.py",
+      "update_node(node_name, output)",
+      "state updates",
+      "model timeouts",
+      "src/runlog.py"
+    ],
+    "edges": [
+      "replaces",
+      "broadcasts string to",
+      "displays",
+      "feeds state updates to",
+      "manages",
+      "enhances",
+      "splits",
+      "is wrapped inside",
+      "acts as",
+      "has methods"
+    ],
+    "relations": [
+      [
+        "LangGraph loop",
+        "feeds state updates to",
+        "dashboard"
+      ],
+      [
+        "RalphDashboard class",
+        "manages",
+        "full-screen Live rendering context"
+      ],
+      [
+        "Left Panel (State)",
+        "displays",
+        "current Implementation Plan and the last Test Output"
+      ],
+      [
+        "src/runlog.py",
+        "enhances",
+        "log() function with callback registry"
+      ],
+      [
+        "log() function",
+        "broadcasts string to",
+        "active Dashboard instance for real-time UI updates"
+      ],
+      [
+        "Right Panel (Live Logs)",
+        "acts as",
+        "tailing log viewer showing Ollama heartbeats, node transitions, and model timeouts"
+      ],
+      [
+        "graph.stream(...)",
+        "is wrapped inside",
+        "Live context"
+      ],
+      [
+        "RalphDashboard class",
+        "has methods",
+        "update_node(node_name, output), update_logs(entries)"
+      ],
+      [
+        "Header Panel",
+        "displays",
+        "current task, target repo, and current Loop Iteration"
+      ],
+      [
+        "Layout Construction",
+        "splits",
+        "terminal screen into a grid"
+      ],
+      [
+        "src/main.py",
+        "replaces",
+        "console.print() loop"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/architecture_roadmap.md",
+    "token_count": 1034,
+    "chunks_processed": 1,
+    "entities": [
+      "scientific ledger",
+      "TIMEOUT (count=1)",
+      "Task Pods",
+      "implementation plans",
+      "local model failure trace",
+      "Green (passed)",
+      "State Routing Matrix",
+      "Streamlit sidebar",
+      "Red (errored)",
+      "LangGraph topology logic",
+      "text-only trace view",
+      "Play / Pause / Save / Resume / Abort",
+      "pytest traceback",
+      "iteration counts",
+      "TEST_FAILED",
+      "temperature",
+      "architectural pivots",
+      "LangGraph engine",
+      "streamlit-agraph",
+      "Visual Graph Editor & Node Inspector",
+      "D3-dag",
+      "Node Library Architecture",
+      "Node coloring",
+      "Yellow (running)",
+      "Play/Pause/Abort buttons",
+      "Add/remove nodes",
+      "custom node parameters",
+      "AI Systems Architect Consultant",
+      "live execution state",
+      "strict warning",
+      "LOCAL_MODEL_TIMEOUT",
+      "Dashboard Controls",
+      "src/graph.py",
+      "shared control file",
+      "Task Pod Architecture",
+      "topology.py",
+      "pytest_evaluator",
+      "agent retries",
+      "React Flow",
+      "planner",
+      "custom graph",
+      "Gemini",
+      "default_planner",
+      "interactive visual graph canvas",
+      "Ollama parameters",
+      "tokens per second (TPS)",
+      "interrupt_before",
+      "nodes, edges",
+      "Cytoscape.js",
+      "stop tokens",
+      "Executor",
+      ".ralph_registry.json",
+      "SQLite checkpoint",
+      "context windows",
+      "monolithic global workspace",
+      "src/nodes/<type>/<variant>.py",
+      "graph execution states",
+      "cloud_consultant",
+      "Streamlit dashboard",
+      "telemetry traces",
+      "Meta-Consultant Cloud Node",
+      "checkpoint APIs",
+      "escalate node",
+      "Grey (pending)",
+      "dynamic prompt injections",
+      "num_ctx",
+      "RALPH Architecture & Evolution Roadmap",
+      "cloud credits",
+      "Hardware-Aware Calibration Node",
+      "Dynamic Task Topologies",
+      "agent logic",
+      "LangGraph configurations",
+      "monolithic script",
+      "strict_ollama_executor",
+      "tasks/<task_id>/ directories"
+    ],
+    "edges": [
+      "removes",
+      "allows independent versioning of",
+      "add",
+      "moves",
+      "replaces",
+      "handles",
+      "repurposes",
+      "shifts from",
+      "benchmarks",
+      "retries on",
+      "write their path to"
+    ],
+    "relations": [
+      [
+        "Task Pod Architecture",
+        "shifts from",
+        "monolithic global workspace"
+      ],
+      [
+        "Task Pod Architecture",
+        "allows independent versioning of",
+        "LangGraph configurations"
+      ],
+      [
+        "Dashboard Controls",
+        "add",
+        "control buttons"
+      ],
+      [
+        "State Routing Matrix",
+        "handles",
+        "graph execution states"
+      ],
+      [
+        "agent",
+        "retries on",
+        "timeouts or pytest failures"
+      ],
+      [
+        "Hardware-Aware Calibration Node",
+        "benchmarks",
+        "local TPS"
+      ],
+      [
+        "Visual Graph Editor & Node Inspector",
+        "replaces",
+        "text-only trace view"
+      ],
+      [
+        "Tasks",
+        "write their path to",
+        ".ralph_registry.json"
+      ],
+      [
+        "Dynamic Task Topologies",
+        "removes",
+        "`src/graph.py`"
+      ],
+      [
+        "Node Library Architecture",
+        "moves",
+        "agent logic"
+      ],
+      [
+        "Meta-Consultant Cloud Node",
+        "repurposes",
+        "`escalate` node"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/check_env.py",
+    "token_count": 101,
+    "chunks_processed": 1,
+    "entities": [
+      "CWD",
+      "main.py path",
+      "sqlite3.connect",
+      "sys.executable",
+      "os",
+      "Path('src/main.py').resolve()",
+      "'src/main.py'",
+      "Python",
+      "pathlib.Path",
+      "sys",
+      "os.getcwd()"
+    ],
+    "edges": [
+      "is"
+    ],
+    "relations": [
+      [
+        "Python",
+        "is",
+        "sys.executable"
+      ],
+      [
+        "CWD",
+        "is",
+        "os.getcwd()"
+      ],
+      [
+        "main.py path",
+        "is",
+        "Path('src/main.py').resolve()"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/d_model.py",
+    "token_count": 2319,
+    "chunks_processed": 1,
+    "entities": [
+      "DIFF_USER",
+      "time.time",
+      "Request",
+      "BASIC_MESSAGES",
+      "Python code block",
+      "SEARCH/REPLACE blocks",
+      "placeholder comment",
+      "pytest-style functions",
+      "assert",
+      "D3",
+      "WHOLE_USER",
+      "WHOLE_SYSTEM",
+      "Aider",
+      "whole-file format",
+      "json.loads",
+      "docstring",
+      "solution.py implementation",
+      "system",
+      "test_solution.py",
+      "latency profile",
+      "pytest-style tests",
+      "/api/chat",
+      "tags",
+      "application/json",
+      "Ollama",
+      "BASE",
+      "Direct local model capability",
+      "user",
+      "implementation",
+      "pathlib.Path",
+      "RALPH plan prompt",
+      "pytest tests",
+      "D_model",
+      "MODEL",
+      "complete file content",
+      "add_numbers(a: float, b: float) -> float",
+      "LiteLLM",
+      "rewrite solution.py",
+      "OLLAMA_BASE_URL",
+      "payload",
+      "config",
+      "urllib.request.urlopen",
+      "SEARCH/REPLACE diff format",
+      "Python code generation",
+      "models",
+      "add_numbers(a, b)",
+      "DIFF_SYSTEM",
+      "unittest.TestCase",
+      "solution.py",
+      "RALPH_PLAN",
+      "sys.path.insert",
+      "Content-Type",
+      "from solution import add_numbers",
+      "LOCAL_MODEL"
+    ],
+    "edges": [
+      "tests",
+      "defines",
+      "requires",
+      "calls",
+      "is reachable by",
+      "contains",
+      "profiles",
+      "checks"
+    ],
+    "relations": [
+      [
+        "RALPH_PLAN",
+        "defines",
+        "Implementation Plan"
+      ],
+      [
+        "config",
+        "contains",
+        "OLLAMA_BASE_URL"
+      ],
+      [
+        "Ollama",
+        "is reachable by",
+        "D_model"
+      ],
+      [
+        "D_model",
+        "checks",
+        "Can the model follow whole-file format"
+      ],
+      [
+        "config",
+        "contains",
+        "LOCAL_MODEL"
+      ],
+      [
+        "D_model",
+        "profiles",
+        "latency profile"
+      ],
+      [
+        "D_model",
+        "tests",
+        "Does a realistic RALPH plan prompt cause the model to stall or degrade?"
+      ],
+      [
+        "BASIC_MESSAGES",
+        "contains",
+        "Write a Python function called add_numbers(a, b) that returns a + b. Include a docstring."
+      ],
+      [
+        "D_model",
+        "checks",
+        "Can the model generate valid Python code at all?"
+      ],
+      [
+        "WHOLE_SYSTEM",
+        "requires",
+        "complete file content inside a single Python code block"
+      ],
+      [
+        "D_model",
+        "checks",
+        "Can the model follow SEARCH/REPLACE diff format"
+      ],
+      [
+        "D_model",
+        "calls",
+        "/api/chat"
+      ],
+      [
+        "DIFF_SYSTEM",
+        "requires",
+        "SEARCH/REPLACE blocks"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/runlog.py",
+    "token_count": 813,
+    "chunks_processed": 1,
+    "entities": [
+      "datetime.datetime.now().isoformat(timespec='seconds')",
+      "_ts()",
+      "log_tool(tool_name, msg)",
+      "OLLAMA_API_BASE",
+      "config.OLLAMA_API_BASE",
+      "ollama_ps()",
+      "OSError",
+      "terminal",
+      "reset_log()",
+      "json",
+      "json.loads(r.read().decode(\"utf-8\"))",
+      "state_exporter.add_log_line",
+      "datetime",
+      "log(msg, also_console=True)",
+      "sys.stdout.write(line)",
+      "TOOLS_DEBUG_PATH",
+      "pathlib.Path",
+      "sys",
+      "Aider subprocess",
+      "loud_timeout(call, budget, extra)",
+      "LLM calls",
+      "ralph_run.log",
+      "urllib.request.urlopen(f\"{OLLAMA_API_BASE}/api/ps\")",
+      "RALPH_VERBOSE",
+      "urllib.request",
+      "Path(RALPH_LOG_PATH).write_text",
+      "models",
+      "RALPH_LOG_PATH",
+      "Get-Content -Wait ralph_run.log"
+    ],
+    "edges": [
+      "writes to",
+      "logs to",
+      "logs a visible block when",
+      "returns",
+      "truncates",
+      "write to",
+      "appends a line to",
+      "is used for",
+      "returns snapshot of"
+    ],
+    "relations": [
+      [
+        "reset_log()",
+        "truncates",
+        "ralph_run.log at the start of a run"
+      ],
+      [
+        "log_tool(tool_name, msg)",
+        "logs to",
+        "tools_debug.log if RALPH_VERBOSE is true"
+      ],
+      [
+        "log(msg, also_console=True)",
+        "appends a line to",
+        "ralph_run.log"
+      ],
+      [
+        "LLM calls",
+        "write to",
+        "ralph_run.log"
+      ],
+      [
+        "Get-Content -Wait ralph_run.log",
+        "is used for",
+        "tail-able by"
+      ],
+      [
+        "ollama_ps()",
+        "returns snapshot of",
+        "/api/ps"
+      ],
+      [
+        "loud_timeout(call, budget, extra)",
+        "logs a visible block when",
+        "a timeout fires"
+      ],
+      [
+        "_ts()",
+        "returns",
+        "current timestamp in HH:MM:SS format"
+      ],
+      [
+        "Aider subprocess",
+        "writes to",
+        "ralph_run.log"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/solution_fib.py",
+    "token_count": 71,
+    "chunks_processed": 1,
+    "entities": [
+      "n",
+      "a",
+      "range(2, n + 1)",
+      "b",
+      "solution.py",
+      "0",
+      "fibonacci(n)",
+      "1"
+    ],
+    "edges": [
+      "defines",
+      "returns",
+      "updates",
+      "initializes"
+    ],
+    "relations": [
+      [
+        "fibonacci(n)",
+        "returns",
+        "1"
+      ],
+      [
+        "fibonacci(n)",
+        "returns",
+        "0"
+      ],
+      [
+        "solution.py",
+        "defines",
+        "fibonacci(n)"
+      ],
+      [
+        "fibonacci(n)",
+        "returns",
+        "b"
+      ],
+      [
+        "solution.py",
+        "initializes",
+        "a, b = 0, 1"
+      ],
+      [
+        "for _ in range(2, n + 1)",
+        "updates",
+        "a, b = b, a + b"
+      ]
+    ]
+  },
+  {
+    "source_file": "C:/Users/kaanchan/AppData/Local/Temp/ralph-test-slice/topology.py",
+    "token_count": 518,
+    "chunks_processed": 1,
+    "entities": [
+      "state.RalphState",
+      "node_id",
+      "c_edge",
+      "importlib",
+      "wrap_node",
+      "module_path",
+      "module",
+      "node_func",
+      "mapping",
+      "task_dir",
+      "checkpointer",
+      "json",
+      "Meta Test",
+      "graph_file",
+      "build_graph",
+      "node_data",
+      "src",
+      "router.route_decision",
+      "pathlib.Path",
+      "Dynamic topology loader",
+      "sys",
+      "func_name",
+      "telemetry.tracer",
+      "END",
+      "data",
+      "RALPH",
+      "g",
+      "graph.json",
+      "escalate_node",
+      "langgraph.graph.StateGraph"
+    ],
+    "edges": [
+      "adds node with id and wrapped function",
+      "adds conditional edges with route_decision and mapping",
+      "raises FileNotFoundError if no",
+      "loads graph structure from",
+      "sets entry point for graph compilation",
+      "adds edge from source to target",
+      "equals 'topology' if node_func is from current module",
+      "is imported using importlib.import_module for non-topology nodes",
+      "contains nodes with id, module, and func"
+    ],
+    "relations": [
+      [
+        "g",
+        "adds conditional edges with route_decision and mapping",
+        "c_edge"
+      ],
+      [
+        "build_graph",
+        "raises FileNotFoundError if no",
+        "graph.json found in task_dir"
+      ],
+      [
+        "data",
+        "contains nodes with id, module, and func",
+        "node_data"
+      ],
+      [
+        "module_path",
+        "equals 'topology' if node_func is from current module",
+        "sys.modules[__name__]"
+      ],
+      [
+        "g",
+        "sets entry point for graph compilation",
+        "data[\"entry_point\"]"
+      ],
+      [
+        "module",
+        "is imported using importlib.import_module for non-topology nodes",
+        "node_func"
+      ],
+      [
+        "g",
+        "adds node with id and wrapped function",
+        "wrap_node(node_id, node_func)"
+      ],
+      [
+        "g",
+        "adds edge from source to target",
+        "edge"
+      ],
+      [
+        "Dynamic topology loader",
+        "loads graph structure from",
+        "graph.json"
+      ]
+    ]
+  }
+]

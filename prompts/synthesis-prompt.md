@@ -1,7 +1,5 @@
 # Synthesis Prompt — Offline Semantic Knowledge Graph Extraction
 
-> Paste this prompt verbatim into a capable model (Claude Opus, Gemini 1.5 Pro, GPT-4o, etc.) **after** all research responses have been placed in the `responses/` folder alongside this file. The model should be given access to read all files in that folder.
-
 ---
 
 ## Your task
