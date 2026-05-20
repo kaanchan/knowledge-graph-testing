@@ -4,11 +4,11 @@ nuextract_pipeline.py — Path B: NuExtract two-pass extraction on markdown docs
 PREREQUISITES:
     pip install ollama tiktoken
 
-    Pull the model (do NOT use 'nuextract' — that is v1.0, limited to 2K context):
-        ollama pull iodose/nuextract-v1.5
+    Default model: nuextract3 (Qwen3.5-4B, registered in Ollama via Modelfile)
+        hf download numind/NuExtract3-GGUF --include '*Q4_K_M*' --local-dir D:/Models/gguf/nuextract3
+        ollama create nuextract3 -f scripts/nuextract3-modelfile.txt  (FROM D:/Models/gguf/nuextract3/NuExtract3-Q4_K_M.gguf)
 
-    Create a custom Modelfile to extend context to 16K:
-        ollama create nuextract-16k -f scripts/nuextract-modelfile.txt
+    Legacy fallback: iodose/nuextract-v1.5 (DEPRECATED — fails on first-person prose)
 
 USAGE:
     python scripts/nuextract_pipeline.py --docs-dir <path-to-ralph-docs> --output-dir r&d/1-find-offline-semantic-tool/responses/
@@ -19,12 +19,12 @@ USAGE:
             --output-dir "r&d/1-find-offline-semantic-tool/responses/"
 
 NOTES:
-    - temperature=0.0 is set explicitly on EVERY ollama.generate() call.
-      Ollama default is 0.7 which causes hallucinations with extraction models.
+    - temperature=0.0 on every call; repeat_penalty=1.3 for nuextract3 to prevent looping.
+    - nuextract3 uses ollama.chat() + think=False (Qwen3 reasoning model — suppresses chain-of-thought).
     - Sliding window: 4,000 tokens / 128-token overlap for docs > 10K tokens.
     - Output per doc: {source_file, entities: [...], relations: [...]}
-    - FLAG FOR REVIEW: After running on markdown, pause and assess quality before
-      extending to Python files (scope decision deferred per spec §Step 3).
+    - MARKDOWN ONLY: nuextract3 extracts poorly from Python/code files (loops on low-content input).
+      Use graphify + Phi-4 (Path A) for code files.
 
 GH issue: #5 (ref #8)
 """
@@ -53,7 +53,7 @@ except ImportError:
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
-MODEL_NAME      = "nuextract-16k"   # created via nuextract-modelfile.txt
+MODEL_NAME      = "nuextract3"      # Qwen3.5-4B, registered via Modelfile — see PREREQUISITES
 WINDOW_TOKENS   = 4_000             # max tokens per sliding window chunk
 OVERLAP_TOKENS  = 128               # overlap between adjacent chunks
 
@@ -133,6 +133,11 @@ def _extract_json(raw: str) -> dict:
     return {"_parse_error": raw}
 
 
+def _is_nuextract3(model_name: str) -> bool:
+    """Return True for nuextract3 — uses chat API + NuExtract prompt format + think=False."""
+    return model_name.lower().startswith("nuextract3")
+
+
 def _is_chat_model(model_name: str) -> bool:
     """Return True for instruction-following chat models (phi4, llama, mistral…)."""
     chat_prefixes = ("phi4", "phi-4", "llama", "mistral", "qwen", "gemma")
@@ -143,11 +148,21 @@ def nuextract_call(template: str, text: str) -> dict:
     """
     Call the extraction model with the appropriate API.
 
-    - nuextract-* models: use ollama.generate() with the mandatory non-chat prompt format.
-    - Chat models (phi4, llama, …): use ollama.chat() with an instruction prompt.
-      This path handles first-person prose and complex markdown that nuextract cannot.
+    - nuextract3: ollama.chat() with NuExtract <|input|> prompt + think=False + repeat_penalty.
+      repeat_penalty=1.3 is required — without it, nuextract3 loops on low-content input.
+    - Chat models (phi4, llama, …): ollama.chat() with plain instruction prompt.
+    - nuextract-16k / legacy: ollama.generate() with mandatory non-chat prompt format.
     """
-    if _is_chat_model(MODEL_NAME):
+    if _is_nuextract3(MODEL_NAME):
+        prompt = PROMPT_TEMPLATE.format(json_template=template, input_text=text)
+        response = ollama.chat(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            think=False,
+            options={"temperature": 0.0, "num_predict": 512, "repeat_penalty": 1.3},
+        )
+        raw = response["message"]["content"].strip()
+    elif _is_chat_model(MODEL_NAME):
         instruction = (
             f"Extract named entities from the text below. "
             f"Return ONLY valid JSON matching this schema (no explanation):\n"
@@ -217,7 +232,9 @@ def _normalise_text(text: str) -> str:
 def extract_document(file_path: str) -> dict:
     """Run two-pass NuExtract extraction on a single document."""
     raw_text = Path(file_path).read_text(encoding="utf-8", errors="replace")
-    text = _normalise_text(raw_text)
+    # nuextract3 handles first-person prose and markdown headers natively;
+    # _normalise_text rewriting is only needed for legacy nuextract-v1.5.
+    text = raw_text if _is_nuextract3(MODEL_NAME) else _normalise_text(raw_text)
     token_count = count_tokens(text)
 
     print(f"  Processing: {file_path} (~{token_count} tokens)")
