@@ -1,0 +1,97 @@
+# graphify.gbnf
+# GBNF grammar for llama.cpp — constrains output to graphify's flat JSON schema.
+# Step 2 fallback (GH #4 ref #8) — used only if Step 1 (JSON schema mode) fails the success gate.
+#
+# HOW GRAMMAR IS USED IN LLAMA-SERVER:
+#   Grammar is passed PER-REQUEST in the request body as the "grammar" field, e.g.:
+#     {
+#       "model": "phi-4",
+#       "messages": [...],
+#       "grammar": "<contents of this file>"
+#     }
+#   Grammar is NOT passed at server startup — start-llama-server.ps1 remains unchanged.
+#   See: start-llama-server-grammar.ps1 for test invocation details.
+#
+# GRAPHIFY COMPATIBILITY NOTE:
+#   graphify may not expose extra_body / grammar field natively in its API call.
+#   If graphify does not support injecting "grammar" via extra_body:
+#     Option A: Check llm.py for an extra_body parameter and patch the env var there.
+#     Option B: Deploy a thin FastAPI proxy between graphify (port 8081) and llama-server
+#               (port 8080) that intercepts /v1/chat/completions and injects the grammar field.
+#   See: https://github.com/ggerganov/llama.cpp/blob/master/grammars/README.md
+#
+# SCHEMA REFERENCE:
+#   Derived from graphify-schema.json (flat structure, no rationale field,
+#   hyperedges always empty array).
+
+root ::= graphify-output
+
+graphify-output ::= "{"
+  ws "\"nodes\"" ws ":" ws node-array ws ","
+  ws "\"edges\"" ws ":" ws edge-array ws ","
+  ws "\"hyperedges\"" ws ":" ws "[]" ws ","
+  ws "\"input_tokens\"" ws ":" ws integer ws ","
+  ws "\"output_tokens\"" ws ":" ws integer
+  ws "}"
+
+# ── Node array ────────────────────────────────────────────────────────────────
+
+node-array ::= "[]" | "[" ws node (ws "," ws node)* ws "]"
+
+node ::= "{"
+  ws "\"id\"" ws ":" ws node-id ws ","
+  ws "\"label\"" ws ":" ws string ws ","
+  ws "\"file_type\"" ws ":" ws file-type ws ","
+  ws "\"source_file\"" ws ":" ws string ws ","
+  ws "\"source_location\"" ws ":" ws nullable ws ","
+  ws "\"source_url\"" ws ":" ws nullable ws ","
+  ws "\"captured_at\"" ws ":" ws nullable ws ","
+  ws "\"author\"" ws ":" ws nullable ws ","
+  ws "\"contributor\"" ws ":" ws nullable
+  ws "}"
+
+# Node ID: lowercase, digits, underscores only (matches ^[a-z0-9_]+$ regex)
+node-id ::= "\"" [a-z0-9_]+ "\""
+
+file-type ::= "\"code\"" | "\"document\"" | "\"paper\"" | "\"image\"" | "\"rationale\"" | "\"concept\""
+
+# ── Edge array ────────────────────────────────────────────────────────────────
+
+edge-array ::= "[]" | "[" ws edge (ws "," ws edge)* ws "]"
+
+edge ::= "{"
+  ws "\"source\"" ws ":" ws node-id ws ","
+  ws "\"target\"" ws ":" ws node-id ws ","
+  ws "\"relation\"" ws ":" ws relation-type ws ","
+  ws "\"confidence\"" ws ":" ws confidence ws ","
+  ws "\"confidence_score\"" ws ":" ws number ws ","
+  ws "\"source_file\"" ws ":" ws string ws ","
+  ws "\"source_location\"" ws ":" ws nullable ws ","
+  ws "\"weight\"" ws ":" ws number
+  ws "}"
+
+relation-type ::= "\"calls\""
+  | "\"implements\""
+  | "\"references\""
+  | "\"cites\""
+  | "\"conceptually_related_to\""
+  | "\"shares_data_with\""
+  | "\"semantically_similar_to\""
+
+confidence ::= "\"EXTRACTED\"" | "\"INFERRED\"" | "\"AMBIGUOUS\""
+
+# ── Primitives ────────────────────────────────────────────────────────────────
+
+# Generic JSON string (printable ASCII, escaped double-quotes allowed)
+string ::= "\"" string-char* "\""
+string-char ::= [^"\\] | "\\" ["\\/bfnrt]
+
+# null or string (for optional nullable fields)
+nullable ::= "null" | string
+
+number ::= "-"? ([0-9] | [1-9][0-9]*) ("." [0-9]+)? (([eE] [+\-]? [0-9]+))?
+
+integer ::= "-"? ([0-9] | [1-9][0-9]*)
+
+# Optional whitespace
+ws ::= [ \t\n\r]*
