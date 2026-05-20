@@ -2,6 +2,21 @@
 
 ---
 
+## 2026-05-20 — Orchestrated script scaffolding for #8 (issue-8-semantic-kg-extraction branch)
+
+- Created parent GH issue #8, linked sub-issues #2–#7 as children via comments + task list
+- Created spec file: `r&d/1-find-offline-semantic-tool/8-spec-offline-semantic-kg-extraction-two-path-experiment.md`
+- Committed all R&D work to master, pushed master and new branch `issue-8-semantic-kg-extraction`
+- Orchestrator spawned 6 parallel agents in isolated worktrees (one per sub-issue)
+- All 6 branches merged conflict-free into `issue-8-semantic-kg-extraction` in dependency order
+- Scripts produced: start-llama-server.ps1, test-endpoint.ps1, run-graphify-llama.ps1,
+  graphify-schema.json, validate_graphify_output.py, graphify.gbnf,
+  start-llama-server-grammar.ps1, nuextract_pipeline.py, nuextract-modelfile.txt,
+  kggen_pipeline.py, comparison-template.md
+- Branch pushed to origin — ready for user to execute Step 0
+
+---
+
 ## 2026-05-20 — Spec + GH issues for semantic KG extraction implementation
 
 - Critically reviewed SYNTHESIS.md against three deep research reports (Claude, Gemini, DeepSeek)
