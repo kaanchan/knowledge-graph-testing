@@ -184,6 +184,7 @@ def extract_document(file_path: str) -> dict:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
+    global MODEL_NAME  # allows --model arg to override the module-level default
     parser = argparse.ArgumentParser(
         description="NuExtract two-pass extraction on markdown docs (Path B, Step 3, GH #5 ref #8)"
     )
@@ -203,8 +204,6 @@ def main():
         help=f"Ollama model name (default: {MODEL_NAME})"
     )
     args = parser.parse_args()
-
-    global MODEL_NAME
     MODEL_NAME = args.model
 
     # Discover markdown files

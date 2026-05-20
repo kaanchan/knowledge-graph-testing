@@ -24,10 +24,12 @@
 #
 # graphify sends requests via its llm.py module. Two options:
 #
-#   OPTION A — extra_body injection (preferred, zero new components)
-#     Check graphify's llm.py for an extra_body parameter in the chat completion call.
-#     If present, set: GRAPHIFY_EXTRA_BODY='{"grammar":"<gbnf-content>"}'
-#     (check llm.py source for the exact env var or kwarg name)
+#   OPTION A — inspect graphify llm.py for extra_body support (preferred, zero new components)
+#     graphify's _call_openai_compat() in llm.py passes extra_body to the OpenAI client.
+#     Check whether there is an env var (e.g. GRAPHIFY_EXTRA_BODY) that populates extra_body —
+#     none was found in the Phase 2 source inspection, so this may require a one-line patch
+#     to llm.py to read an env var and inject "grammar" into the extra_body dict.
+#     File: %APPDATA%\uv\tools\graphifyy\Lib\site-packages\graphify\llm.py
 #
 #   OPTION B — Thin FastAPI proxy (if Option A not available)
 #     Deploy a small proxy that:

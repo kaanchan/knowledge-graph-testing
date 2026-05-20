@@ -1,30 +1,48 @@
 {
-  "nodes": [
-    {
-      "id": "stem_entity",
-      "label": "Human Readable Name",
-      "file_type": "code|document|paper|image|rationale|concept",
-      "source_file": "relative/path",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null
-    }
-  ],
-  "edges": [
-    {
-      "source": "node_id",
-      "target": "node_id",
-      "relation": "calls|implements|references|cites|conceptually_related_to|shares_data_with|semantically_similar_to",
-      "confidence": "EXTRACTED|INFERRED|AMBIGUOUS",
-      "confidence_score": 1.0,
-      "source_file": "relative/path",
-      "source_location": null,
-      "weight": 1.0
-    }
-  ],
-  "hyperedges": [],
-  "input_tokens": 0,
-  "output_tokens": 0
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["nodes", "edges", "hyperedges", "input_tokens", "output_tokens"],
+  "additionalProperties": false,
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "file_type", "source_file"],
+        "additionalProperties": false,
+        "properties": {
+          "id":              { "type": "string", "pattern": "^[a-z0-9_]+$" },
+          "label":           { "type": "string" },
+          "file_type":       { "type": "string", "enum": ["code", "document", "paper", "image", "rationale", "concept"] },
+          "source_file":     { "type": "string" },
+          "source_location": { "type": ["string", "null"] },
+          "source_url":      { "type": ["string", "null"] },
+          "captured_at":     { "type": ["string", "null"] },
+          "author":          { "type": ["string", "null"] },
+          "contributor":     { "type": ["string", "null"] }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "target", "relation", "confidence", "confidence_score", "source_file", "weight"],
+        "additionalProperties": false,
+        "properties": {
+          "source":          { "type": "string" },
+          "target":          { "type": "string" },
+          "relation":        { "type": "string", "enum": ["calls", "implements", "references", "cites", "conceptually_related_to", "shares_data_with", "semantically_similar_to"] },
+          "confidence":      { "type": "string", "enum": ["EXTRACTED", "INFERRED", "AMBIGUOUS"] },
+          "confidence_score":{ "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "source_file":     { "type": "string" },
+          "source_location": { "type": ["string", "null"] },
+          "weight":          { "type": "number" }
+        }
+      }
+    },
+    "hyperedges":    { "type": "array", "maxItems": 0 },
+    "input_tokens":  { "type": "integer" },
+    "output_tokens": { "type": "integer" }
+  }
 }

@@ -121,7 +121,7 @@ def extract_file(kg: KGGen, file_path: str) -> dict:
             print(f"    Chunk {i + 1}/{len(chunks)}")
 
         try:
-            result = kg.generate(text=chunk)
+            result = kg.generate(input_data=chunk)
             # kg-gen returns an object with .entities, .edges, .relations attributes
             # depending on version — handle both dict and object forms
             if isinstance(result, dict):

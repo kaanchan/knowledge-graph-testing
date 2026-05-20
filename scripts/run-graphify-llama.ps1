@@ -27,7 +27,7 @@ param(
 
     [string]$OllamaBaseUrl          = "http://127.0.0.1:8080/v1",
     [string]$OllamaModel            = "phi-4",           # CONFIRM: run test-endpoint.ps1 first
-    [string]$GraphifyOllamNumCtx    = "16384",
+    [string]$GraphifyOllamaNumCtx   = "16384",
     [string]$GraphifyApiTimeout     = "900",
     [string]$GraphifyMaxOutputTokens = "4096"
 )
@@ -53,7 +53,7 @@ try {
 
 $env:OLLAMA_BASE_URL             = $OllamaBaseUrl
 $env:OLLAMA_MODEL                = $OllamaModel
-$env:GRAPHIFY_OLLAMA_NUM_CTX     = $GraphifyOllamNumCtx
+$env:GRAPHIFY_OLLAMA_NUM_CTX     = $GraphifyOllamaNumCtx
 $env:GRAPHIFY_API_TIMEOUT        = $GraphifyApiTimeout
 $env:GRAPHIFY_MAX_OUTPUT_TOKENS  = $GraphifyMaxOutputTokens
 
@@ -74,7 +74,9 @@ Write-Host ""
 # --directory: path to codebase slice to analyse
 
 Write-Host "Running graphify..." -ForegroundColor Cyan
-uv run graphify --backend ollama --directory $Directory
+# Correct CLI: 'graphify extract <path> --backend <backend> [--model <model>]'
+# graphify-out/ is written into the target directory by default.
+uv run graphify extract $Directory --backend ollama --model $OllamaModel
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error "graphify exited with code $LASTEXITCODE"
@@ -85,8 +87,9 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host ""
 Write-Host "graphify completed." -ForegroundColor Green
 Write-Host ""
-Write-Host "Next: validate the output JSON:"
-Write-Host "  python scripts\validate_graphify_output.py --input <graphify-output.json>"
+Write-Host "Next: validate the output JSON."
+Write-Host "  graphify writes to graphify-out\graph.json in the CURRENT working directory."
+Write-Host "  python scripts\validate_graphify_output.py --input graphify-out\graph.json"
 Write-Host ""
 Write-Host "SUCCESS GATE: >= 1 edge per file, all node IDs match ^[a-z0-9_]+$, confidence enum populated."
 Write-Host "If gate NOT met -> proceed to Step 2 (GBNF grammar fallback): .\scripts\start-llama-server-grammar.ps1"
