@@ -4,7 +4,7 @@
 # PREREQUISITES:
 #   1. Download llama.cpp Windows CUDA binary (CUDA 12.x, x64) from:
 #      https://github.com/ggerganov/llama.cpp/releases  (latest release, e.g. llama-b...-win-cuda12-x64.zip)
-#      Extract to D:\llama.cpp\ so that D:\llama.cpp\llama-server.exe exists.
+#      Extract to C:\Users\kaanchan\bin\llama.cpp\ so that llama-server.exe exists there.
 #
 #   2. Download Phi-4 14B Q4_K_M GGUF from Hugging Face:
 #      https://huggingface.co/bartowski/phi-4-GGUF
@@ -18,7 +18,7 @@
 
 param(
     [string]$ModelPath   = "D:\models\phi-4-Q4_K_M.gguf",
-    [string]$ServerExe   = "D:\llama.cpp\llama-server.exe",
+    [string]$ServerExe   = "C:\Users\kaanchan\bin\llama.cpp\llama-server.exe",
     [int]   $GpuLayers   = 99,
     [int]   $CtxSize     = 16384,
     [int]   $Port        = 8080

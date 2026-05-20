@@ -47,7 +47,7 @@
 
 param(
     [string]$ModelPath = "D:\models\phi-4-Q4_K_M.gguf",
-    [string]$ServerExe = "D:\llama.cpp\llama-server.exe",
+    [string]$ServerExe = "C:\Users\kaanchan\bin\llama.cpp\llama-server.exe",
     [int]   $GpuLayers = 99,
     [int]   $CtxSize   = 16384,
     [int]   $Port      = 8080,
