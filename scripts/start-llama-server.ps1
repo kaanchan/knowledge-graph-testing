@@ -17,7 +17,7 @@
 #   After startup, run scripts\test-endpoint.ps1 in a second terminal.
 
 param(
-    [string]$ModelPath   = "D:\models\phi-4-Q4_K_M.gguf",
+    [string]$ModelPath   = "D:\Models\gguf\phi-4-Q4_K_M.gguf",
     [string]$ServerExe   = "C:\Users\kaanchan\bin\llama.cpp\llama-server.exe",
     [int]   $GpuLayers   = 99,
     [int]   $CtxSize     = 16384,
