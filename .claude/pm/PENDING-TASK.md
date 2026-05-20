@@ -1,4 +1,52 @@
-# PENDING TASK — Offline Semantic KG Extraction: Execution
+# PENDING TASK — Knowledge Graph: Full Corpus Run + Graph Utilisation
+
+**Branch:** issue-8-semantic-kg-extraction
+**Last commit:** 0841f9a
+**Parent GH issue:** #8
+**Status:** Step 5 closed (#7). Ready for next phase.
+
+---
+
+## Completed this branch (DO NOT REDO)
+- Step 0–4: all extraction paths validated on 10-file test slice
+- Step 5: comparison done, nuextract3 upgraded, merge pipeline built
+- Merged graph verified by user (143 nodes, 8 fused, 153 edges)
+- Key scripts: scripts/nuextract_pipeline.py, scripts/merge_graphs.py
+
+---
+
+## Next session — three tracks to open as GH issues
+
+### Track 1: How to USE the graph to maximum benefit
+Open a new GH issue for this. Questions to answer:
+- How do we query the merged graph? (JSON traversal, graph DB like NetworkX/Neo4j, SPARQL?)
+- How do we feed it to an AI agent? (as context window text, as structured retrieval, as RAG index?)
+- What does a "graph-augmented prompt" look like for Ralph development tasks?
+- Can another AI agent walk the graph to answer questions about the Ralph codebase?
+
+### Track 2: Full corpus run
+- Path A (graphify + Phi-4): 51 Python files in C:\Users\kaanchan\Projects\AI\ralph\
+  llama-server must be running: .\scripts\start-llama-server.ps1
+- Path B (nuextract3): 204 markdown files in C:\Users\kaanchan\Projects\AI\ralph\
+  Ollama must be running: OLLAMA_MODELS=D:\Models\ollama already set
+- Merge both outputs with scripts/merge_graphs.py
+- Expected scale: ~3,500–5,500 nodes, ~4,500–8,500 edges
+
+### Track 3: GPU optimisation (run extraction while GPU serves other workloads)
+- Problem: nuextract3 + Ollama uses the RTX 3090 fully during extraction
+- Options to investigate:
+  a. Ollama OLLAMA_NUM_GPU=0 or partial GPU layers (--num-gpu N in Modelfile) to cap VRAM usage
+  b. llama.cpp --n-gpu-layers N to split model across CPU+GPU, leaving headroom
+  c. Batch extraction at night / low-priority process
+  d. Quantise further (Q2_K ~1.9GB) to reduce VRAM footprint
+- Goal: extraction pipeline runs at ~50% GPU so other inference (phi4, etc.) can run concurrently
+
+---
+
+## Resume instructions
+1. Open GH issues for the three tracks above before writing any code
+2. Decide which track to start first with user
+3. Do NOT merge issue-8-semantic-kg-extraction to master until user confirms
 
 **Branch:** issue-8-semantic-kg-extraction
 **Last commit:** e986944 (fix: update validator to match graphify output format refs #3)
