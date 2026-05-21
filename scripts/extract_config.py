@@ -252,7 +252,7 @@ def _load_pathspec(path: Path, label: str, found: list) -> tuple:
     """Parse one ignore file into a pathspec.  Returns (base_dir, spec) or None."""
     try:
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        spec = _pathspec.PathSpec.from_lines("gitwildmatch", lines)
+        spec = _pathspec.PathSpec.from_lines("gitignore", lines)
         found.append((path, label))
         return (path.parent, spec)
     except Exception:
