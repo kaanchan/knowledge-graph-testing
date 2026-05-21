@@ -34,6 +34,8 @@ import argparse
 import glob
 import os
 import sys
+import time
+import urllib.request
 from pathlib import Path
 
 try:
@@ -50,6 +52,228 @@ except ImportError:
     # Fallback: rough word-based estimate (1 token ≈ 0.75 words)
     def count_tokens(text: str) -> int:
         return int(len(text.split()) / 0.75)
+
+# ── Preflight checks ──────────────────────────────────────────────────────────
+
+def _ollama_not_running_msg(api_base: str) -> str:
+    sep = "=" * 68
+    return f"""
+{sep}
+  PREFLIGHT FAILED — Ollama is not running
+{sep}
+
+  What is Ollama?
+    Ollama is a free, local AI model server. It runs language models
+    entirely on your own machine — no internet connection or API key
+    is required after the initial download. This script uses Ollama
+    to run the NuExtract3 extraction model locally.
+
+  How to start Ollama:
+    1. Install Ollama (one-time, free):
+         https://ollama.com/download
+    2. Start the server in a terminal:
+         ollama serve
+       Or open the Ollama desktop app — it starts the server automatically.
+    3. Confirm it is running:
+         curl {api_base}/api/tags
+       You should see a JSON object listing available models.
+    4. Re-run this script.
+
+  What Ollama provides once running:
+    - Runs AI models fully offline on your GPU or CPU
+    - Manages model downloads, versions, and memory automatically
+    - Exposes a local REST API at {api_base}
+      (nothing leaves your machine)
+
+  Hardware requirements for this pipeline:
+    NuExtract3 Q4_K_M  ~4 GB VRAM  (used by this script)
+    Phi-4 Q4_K_M       ~9 GB VRAM  (used by kggen_pipeline.py / Path A)
+
+  To stop Ollama later:
+    Press Ctrl+C in the terminal where you ran 'ollama serve'.
+    Or: File → Quit in the desktop app.
+
+  To uninstall Ollama:
+    Windows: Settings → Apps → Ollama → Uninstall
+    macOS:   Move Ollama.app to Trash, then: rm -rf ~/.ollama
+{sep}
+"""
+
+
+def _model_not_found_msg(model_name: str, available: list) -> str:
+    sep = "=" * 68
+    available_str = "\n    ".join(available) if available else "(none pulled yet)"
+    return f"""
+{sep}
+  PREFLIGHT FAILED — Model '{model_name}' is not in Ollama
+{sep}
+
+  What is NuExtract3?
+    NuExtract3 is a compact (2.7 GB) AI model specialised for extracting
+    structured facts from text. Given a document, it identifies:
+      - Entities: named concepts, systems, people, components
+      - Relations: how those entities connect (e.g. "X depends on Y")
+    These become the nodes and edges of your knowledge graph.
+
+    It is based on Qwen3.5-4B and works entirely offline once downloaded.
+
+  How to set it up (one-time, ~2.7 GB download):
+
+    Step 1 — Install the Hugging Face CLI (if not already):
+      pip install huggingface_hub
+
+    Step 2 — Download the model weights:
+      huggingface-cli download numind/NuExtract3-GGUF \\
+        --include "*Q4_K_M*" \\
+        --local-dir D:/Models/gguf/nuextract3
+
+    Step 3 — Register the model with Ollama:
+      ollama create nuextract3 -f scripts/nuextract3-modelfile.txt
+
+    Step 4 — Confirm it appears:
+      ollama list
+      (you should see nuextract3:latest)
+
+    Step 5 — Re-run this script.
+
+  Why Q4_K_M?
+    This is a 4-bit compressed version. It fits in ~4 GB VRAM and runs
+    at a practical speed for batch document processing. If you have less
+    VRAM available, Q2_K (~1.9 GB) is also in the same Hugging Face repo.
+
+  Tweaking the model:
+    Pass --model <name> to use a different Ollama model, e.g.:
+      python scripts/nuextract_pipeline.py --model phi4 --docs-dir ...
+    Chat models (phi4, llama, mistral) will use a different prompt path.
+
+  To remove the model later:
+    ollama rm nuextract3
+    # then delete the weights if you want the disk space back:
+    # del "D:\\Models\\gguf\\nuextract3\\*.gguf"
+
+  Models currently available in your Ollama:
+    {available_str}
+{sep}
+"""
+
+
+def _elapsed_str(seconds: float) -> str:
+    h, rem = divmod(int(seconds), 3600)
+    m, s = divmod(rem, 60)
+    return f"{h}h {m:02d}m {s:02d}s" if h else f"{m}m {s:02d}s"
+
+
+def _unload_model(model_name: str, api_base: str) -> None:
+    """Tell Ollama to evict the model from GPU/CPU memory immediately."""
+    print(f"  Unloading '{model_name}' from memory...", end=" ", flush=True)
+    try:
+        payload = json.dumps({
+            "model": model_name,
+            "prompt": "",
+            "keep_alive": 0,
+            "stream": False,
+        }).encode()
+        req = urllib.request.Request(
+            f"{api_base}/api/generate",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=15)
+        print("done.")
+    except Exception as exc:
+        print(f"WARNING: could not unload ({exc})")
+
+
+def _write_and_report(
+    results: list,
+    total_planned: int,
+    output_path,
+    start_time: float,
+    pid: int,
+    aborted: bool,
+    model_name: str,
+    api_base: str,
+) -> None:
+    """Write output (partial or full) and print a final shutdown report."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    total_entities  = sum(len(r.get("entities",  [])) for r in results)
+    total_relations = sum(len(r.get("relations", [])) for r in results)
+    docs_with_output = sum(1 for r in results if r.get("entities") and r.get("relations"))
+    skipped = total_planned - len(results)
+    elapsed = time.monotonic() - start_time
+
+    status = "ABORTED -- Ctrl+C" if aborted else "EXTRACTION COMPLETE"
+    sep = "=" * 64
+
+    print()
+    print(sep)
+    print(f"  {status}")
+    print(sep)
+    print(f"  PID:              {pid}")
+    print(f"  Total time:       {_elapsed_str(elapsed)}")
+    print(f"  Files planned:    {total_planned}")
+    print(f"  Files completed:  {len(results)}", end="")
+    if aborted:
+        print(f"  ({skipped} not processed)")
+    else:
+        print()
+    print(f"  Docs with output: {docs_with_output} / {len(results)}")
+    print(f"  Entities found:   {total_entities}")
+    print(f"  Relations found:  {total_relations}")
+    print(f"  Output saved:     {output_path}")
+    if aborted:
+        print(f"  NOTE: Partial output -- re-run to continue (skipped files not saved).")
+    print()
+    if results:
+        _unload_model(model_name, api_base)
+    else:
+        print(f"  No files processed -- model was not loaded, nothing to unload.")
+    print(f"  PID {pid} exiting cleanly.")
+    print(sep)
+
+
+def _progress_line(done: int, total: int, recent_times: list) -> str:
+    """Return a one-line progress string with percentage, avg speed, and ETA."""
+    pct = done / total * 100
+    if not recent_times:
+        return f"  [{done}/{total}]  {pct:.0f}%"
+    avg = sum(recent_times) / len(recent_times)
+    eta_secs = avg * (total - done)
+    h, rem = divmod(int(eta_secs), 3600)
+    m, s = divmod(rem, 60)
+    eta_str = f"{h}h {m:02d}m {s:02d}s" if h else f"{m}m {s:02d}s"
+    return f"  [{done}/{total}]  {pct:.0f}%  ~{avg:.1f}s/file  ETA {eta_str}"
+
+
+def preflight_check(model_name: str, api_base: str = "http://localhost:11434") -> None:
+    """Verify Ollama is reachable and the required model is pulled. Exit with guidance if not."""
+    import urllib.request
+    import urllib.error
+
+    # 1 — Daemon check
+    try:
+        urllib.request.urlopen(f"{api_base}/api/tags", timeout=3)
+    except Exception:
+        print(_ollama_not_running_msg(api_base))
+        sys.exit(1)
+
+    # 2 — Model availability check
+    try:
+        with urllib.request.urlopen(f"{api_base}/api/tags", timeout=5) as resp:
+            data = json.loads(resp.read())
+        # Tags endpoint returns names like "nuextract3:latest" — strip the tag
+        available = [m["name"].split(":")[0] for m in data.get("models", [])]
+        if not any(a == model_name or a.startswith(model_name) for a in available):
+            print(_model_not_found_msg(model_name, available))
+            sys.exit(1)
+    except SystemExit:
+        raise
+    except Exception as exc:
+        print(f"WARNING: Could not verify model list: {exc}\n  Proceeding anyway.")
+
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -355,8 +579,24 @@ def main():
         default=MODEL_NAME,
         help=f"Ollama model name (default: {MODEL_NAME})"
     )
+    parser.add_argument(
+        "--api-base",
+        default="http://localhost:11434",
+        help="Ollama API base URL (default: http://localhost:11434)"
+    )
+    parser.add_argument(
+        "--force", action="store_true",
+        help="Reprocess all files even if already present in the output (disables resume)"
+    )
     args = parser.parse_args()
     MODEL_NAME = args.model
+
+    pid = os.getpid()
+    start_time = time.monotonic()
+    print(f"  PID {pid}  |  Stop cleanly: Ctrl+C  |  Force kill: taskkill /PID {pid} /F")
+    print()
+
+    preflight_check(MODEL_NAME, args.api_base)
 
     # Discover markdown files
     docs_dir = Path(args.docs_dir)
@@ -371,43 +611,65 @@ def main():
     print(f"Model: {MODEL_NAME}")
     print()
 
-    # Run extraction
-    results = []
-    for i, fp in enumerate(md_files):
-        print(f"[{i + 1}/{len(md_files)}]")
-        try:
-            record = extract_document(str(fp))
-        except Exception as exc:
-            print(f"    ERROR: {exc}")
-            record = {"source_file": str(fp.as_posix()), "error": str(exc)}
-        results.append(record)
-
-    # Write output
+    # Prepare output path early so partial results can always be saved
     output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "nuextract-output.json"
-    output_path.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    # Summary
-    total_entities  = sum(len(r.get("entities", [])) for r in results)
-    total_relations = sum(len(r.get("relations", [])) for r in results)
-    docs_with_output = sum(
-        1 for r in results
-        if r.get("entities") and r.get("relations")
+    # Resume: skip files already in the output unless --force
+    existing_results: list = []
+    if output_path.exists() and not args.force:
+        try:
+            existing_results = json.loads(output_path.read_text(encoding="utf-8"))
+            already_done = {r["source_file"] for r in existing_results if "source_file" in r}
+            before = len(md_files)
+            md_files = [fp for fp in md_files if str(fp.as_posix()) not in already_done]
+            skipped = before - len(md_files)
+            if skipped:
+                print(f"  Resume: {skipped} file(s) already processed, {len(md_files)} remaining.")
+                print(f"  (Use --force to reprocess everything.)")
+                print()
+        except Exception:
+            existing_results = []
+
+    if not md_files:
+        print("  All files already processed. Nothing to do.")
+        print(f"  Output: {output_path}")
+        return
+
+    # Run extraction
+    aborted = False
+    results = []
+    recent_times: list = []  # rolling window of last 10 file durations
+    try:
+        for i, fp in enumerate(md_files):
+            print(_progress_line(i, len(md_files), recent_times))
+            t0 = time.monotonic()
+            try:
+                record = extract_document(str(fp))
+            except Exception as exc:
+                print(f"    ERROR: {exc}")
+                record = {"source_file": str(fp.as_posix()), "error": str(exc)}
+            elapsed = time.monotonic() - t0
+            recent_times.append(elapsed)
+            if len(recent_times) > 10:
+                recent_times.pop(0)
+            results.append(record)
+    except KeyboardInterrupt:
+        aborted = True
+        print("\n\n  Ctrl+C received -- writing partial results and shutting down...")
+
+    _write_and_report(
+        existing_results + results, len(md_files), output_path,
+        start_time, pid, aborted, MODEL_NAME, args.api_base,
     )
 
-    print()
-    print("=" * 60)
-    print("EXTRACTION COMPLETE")
-    print(f"  Docs processed:       {len(results)}")
-    print(f"  Docs with output:     {docs_with_output} / {len(results)}")
-    print(f"  Total entities found: {total_entities}")
-    print(f"  Total relations found:{total_relations}")
-    print(f"  Output written to:    {output_path}")
-    print()
-    print("FLAG FOR REVIEW: Inspect output before deciding whether to extend to Python files.")
-    print("SUCCESS GATE: >= 1 entity + >= 1 relation per doc, no hallucinated entity names.")
-    print("=" * 60)
+    if not aborted:
+        print()
+        print("FLAG FOR REVIEW: Inspect output before deciding whether to extend to Python files.")
+        print("SUCCESS GATE: >= 1 entity + >= 1 relation per doc, no hallucinated entity names.")
+
+    if aborted:
+        sys.exit(130)  # standard exit code for Ctrl+C (128 + SIGINT=2)
 
 
 if __name__ == "__main__":

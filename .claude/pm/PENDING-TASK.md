@@ -1,10 +1,15 @@
 # PENDING TASK — Knowledge Graph: Track 1 — Graph Utilisation (GH #10)
 
-**Branch:** issue-8-semantic-kg-extraction
-**Last commit:** 21a176d
+**Branch:** issue-10-graph-utilisation
 **Active GH issue:** #10 (Track 1: Graph utilisation)
 **Parent GH issue:** #8
-**Status:** Extraction pipeline complete. Starting graph utilisation phase.
+**Status:** Pipeline hardened + dispatcher written. Awaiting user test confirmation before commit.
+
+## Completed this session (not yet committed)
+- [x] Preflight checks + educational error messages added to nuextract_pipeline.py + kggen_pipeline.py
+- [x] ETA/progress stats (rolling 10-file window) added to both scripts
+- [x] dispatch_pipeline.py: file-type classification (prose/code/config/skip), smart routing, fallback on empty/error, exclusion list, dry-run mode
+- [x] Dry-run verified on this repo: 26 files, .remember/.claude/r&d/responses all excluded
 
 ---
 
