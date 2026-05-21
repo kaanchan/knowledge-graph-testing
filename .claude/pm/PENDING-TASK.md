@@ -1,3 +1,18 @@
+# PENDING TASK - Pre-extraction content triage via judge model (GH #11)
+
+**Branch:** issue-10-graph-utilisation
+**Issue:** https://github.com/kaanchan/knowledge-graph-testing/issues/11
+
+## Sub-tasks
+- [ ] Add _triage_file() + schema + prompt to dispatch_pipeline.py
+- [ ] Add --model-judge / --no-triage argparse flags
+- [ ] Wire triage into extraction loop
+- [ ] Add triage fields to output records and summary
+- [ ] Update docs
+- [ ] Commit refs #11, push
+
+---
+
 # PENDING TASK — Knowledge Graph: Track 1 — Graph Utilisation (GH #10)
 
 **Branch:** issue-10-graph-utilisation
@@ -114,3 +129,4 @@ Sub-tasks:
 - Do NOT merge to master until Step 5 complete and user confirms
 - All commits reference issue numbers
 - Test slice stays at C:\Users\kaanchan\AppData\Local\Temp\ralph-test-slice\
+

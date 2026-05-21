@@ -6,14 +6,22 @@ and falls back to the alternative model if the primary returns empty output
 or raises an error.
 
 ROUTING TABLE
+  Extension-based classification runs first for all files:
   prose   (.md .txt .rst .adoc .tex .wiki .org)
-              → nuextract3 primary  /  phi4 fallback
+              → triage → prose: nuextract3 / phi4 fallback
+                         structured: phi4 direct
+                         mixed: nuextract3 / phi4 fallback (always)
+                         skip: no extraction
   code    (.py .js .ts .go .rs .java .c .cpp .cs .sh .ps1 .sql ...)
-              → phi4 primary  /  nuextract3 fallback
+              → phi4 primary  /  nuextract3 fallback  (no triage)
   config  (.yaml .yml .toml .json .ini .cfg .env .xml .properties)
-              → phi4 primary  /  nuextract3 fallback
+              → phi4 primary  /  nuextract3 fallback  (no triage)
   skip    (.png .jpg .pdf .zip .exe .pyc .lock ...)
               → always skipped
+
+  Triage uses the judge model (default: phi4) to read the first 3000 chars
+  and classify content before any extraction model is invoked. Disable with
+  --no-triage to fall back to extension-only routing.
 
 DEFAULT EXCLUSIONS (applied automatically, extend with --exclude)
   .git/  node_modules/  __pycache__/  .venv/  venv/  dist/  build/
@@ -318,6 +326,67 @@ def _is_empty(result: dict) -> bool:
     )
 
 
+# ── Pre-extraction triage ──────────────────────────────────────────────────────
+
+_TRIAGE_CATEGORIES = ("prose", "structured", "mixed", "skip")
+
+_TRIAGE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "content_type": {"type": "string", "enum": list(_TRIAGE_CATEGORIES)},
+        "reason": {"type": "string"},
+    },
+    "required": ["content_type", "reason"],
+}
+
+_TRIAGE_PROMPT = """\
+Classify this document so it can be routed to the best knowledge-graph extraction model.
+
+Return content_type as exactly one of:
+- prose      narrative text, explanations, descriptions — NuExtract3 excels here
+- structured tables, flag/option references, lists without surrounding prose — Phi-4 excels here
+- mixed      has substantial prose sections AND tables/structured sections
+- skip       no extractable facts (empty templates, placeholder-only, pure diagrams)
+
+Document excerpt (first 3000 chars):
+{excerpt}"""
+
+
+def _triage_file(file_path: Path, judge_model: str, api_base: str) -> tuple:
+    """Ask the judge model to classify file content for routing.
+
+    Returns (category, reason). Category is one of _TRIAGE_CATEGORIES.
+    Falls back to ("prose", "<error>") silently so a triage failure never
+    blocks extraction.
+    """
+    if _ollama_lib is None:
+        return "prose", "ollama not available"
+
+    text = file_path.read_text(encoding="utf-8", errors="replace")
+    excerpt = text[:3000]
+    prompt = _TRIAGE_PROMPT.format(excerpt=excerpt)
+
+    bare_model = judge_model.split("/", 1)[-1] if "/" in judge_model else judge_model
+
+    try:
+        response = _run_with_interrupt(
+            _ollama_lib.chat,
+            model=bare_model,
+            messages=[{"role": "user", "content": prompt}],
+            format=_TRIAGE_SCHEMA,
+            options={"temperature": 0.0, "num_predict": 120},
+            host=api_base,
+        )
+        parsed = json.loads(response["message"]["content"].strip())
+        cat = parsed.get("content_type", "prose")
+        reason = parsed.get("reason", "")
+        if cat not in _TRIAGE_CATEGORIES:
+            cat = "prose"
+        return cat, reason
+    except Exception as exc:
+        return "prose", f"triage error: {exc}"
+
+
 def extract_file(
     file_path: Path,
     primary: str,
@@ -475,12 +544,22 @@ def _write_and_report(
         for f in empty_files:
             print(f"                            {f}")
     print()
+    triage_counts: dict = {}
+    for r in results:
+        t = r.get("triage")
+        if t:
+            triage_counts[t] = triage_counts.get(t, 0) + 1
+
     print(f"  --- Model usage (this run) ---")
     if by_model:
         for m, count in sorted(by_model.items()):
-            fallback_note = " (fallback)" if m != sorted(by_model.keys())[0] else " (primary)"
             print(f"    {m:<28} {count} file(s)")
     print(f"  Fallback triggered:     {used_fallback} file(s)")
+    if triage_counts:
+        print(f"  --- Triage breakdown (this run) ---")
+        for cat in ("prose", "structured", "mixed", "skip"):
+            if cat in triage_counts:
+                print(f"    {cat:<12} {triage_counts[cat]} file(s)")
     print()
     print(f"  --- Corpus total (including previous runs) ---")
     print(f"  Previously processed:   {prev_count} file(s)")
@@ -768,7 +847,18 @@ def main() -> None:
         "--api-base", default="http://localhost:11434",
         help="Ollama API base URL (default: http://localhost:11434)"
     )
+    parser.add_argument(
+        "--model-judge", default=None, metavar="MODEL",
+        help="Model for pre-extraction content triage (default: same as --model-code)"
+    )
+    parser.add_argument(
+        "--no-triage", action="store_true",
+        help="Skip content-based pre-routing; use extension-based routing only"
+    )
     args = parser.parse_args()
+
+    if args.model_judge is None:
+        args.model_judge = args.model_code
 
     root = Path(args.dir)
     if not root.exists():
@@ -843,9 +933,11 @@ def main() -> None:
     print()
 
     # Extraction loop
+    triage_enabled = not args.no_triage
     print(f"Starting extraction on {len(classified)} file(s).")
     print(f"  Prose model:  {args.model_prose}")
     print(f"  Code model:   {args.model_code}")
+    print(f"  Judge model:  {args.model_judge}  (triage: {'enabled' if triage_enabled else 'disabled'})")
     print(f"  Fallback:     {'disabled' if args.no_fallback else 'enabled'}")
     print()
 
@@ -858,9 +950,47 @@ def main() -> None:
 
     try:
         for i, (fp, category) in enumerate(classified):
-            primary  = _primary_for(category)
-            fallback = _fallback_for(category)
             print(_progress_line(i, len(classified), recent_times))
+
+            # Content-based triage for prose/unknown files
+            triage_cat = None
+            triage_reason = None
+            if triage_enabled and category in ("prose", "unknown"):
+                t_triage = time.monotonic()
+                triage_cat, triage_reason = _triage_file(fp, args.model_judge, args.api_base)
+                triage_elapsed = time.monotonic() - t_triage
+                print(f"  [triage: {triage_cat:<10}] {fp.name}  ({triage_elapsed:.1f}s)")
+                if triage_reason:
+                    print(f"    {triage_reason}")
+                models_invoked.add(
+                    args.model_judge.split("/", 1)[-1] if "/" in args.model_judge else args.model_judge
+                )
+
+            # Resolve routing — triage overrides extension-based defaults
+            if triage_cat == "structured":
+                primary, fallback = "phi4", None
+            elif triage_cat == "mixed":
+                primary, fallback = "nuextract3", "phi4"  # always fall back for mixed
+            elif triage_cat == "skip":
+                record = {
+                    "source_file":  str(fp.as_posix()),
+                    "category":     category,
+                    "triage":       "skip",
+                    "triage_reason": triage_reason,
+                    "entities":     [],
+                    "relations":    [],
+                    "model_used":   args.model_judge,
+                }
+                results.append(record)
+                elapsed = 0.0
+                recent_times.append(elapsed)
+                if len(recent_times) > 10:
+                    recent_times.pop(0)
+                continue
+            else:
+                primary  = _primary_for(category)
+                fallback = _fallback_for(category)
+
             print(f"  [{category:<8}] {fp.name}  -> {primary}")
 
             t0 = time.monotonic()
@@ -871,6 +1001,9 @@ def main() -> None:
                     args.api_base, args.no_fallback,
                 )
                 record["category"] = category
+                if triage_cat:
+                    record["triage"] = triage_cat
+                    record["triage_reason"] = triage_reason
                 models_invoked.add(record.get("model_used", primary))
             except Exception as exc:
                 print(f"    ERROR: {exc}")
