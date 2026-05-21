@@ -1,0 +1,10 @@
+# Core extraction pipeline dependencies
+ollama
+tiktoken
+kg-gen
+
+# Optional — strongly recommended for full gitignore semantics in extract_config.py
+# Without this, only bare directory names in .*ignore files are honoured.
+# Glob patterns (*.min.js, /anchored, !negation) require pathspec.
+# Install: pip install pathspec   or   uv add pathspec
+pathspec

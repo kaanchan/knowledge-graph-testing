@@ -91,7 +91,7 @@ def _run_with_interrupt(fn, *args, **kwargs):
 
 
 # ── Shared scan configuration ──────────────────────────────────────────────────
-from extract_config import build_exclude_set, is_excluded
+from extract_config import build_ignore_spec, is_binary
 
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
@@ -646,6 +646,10 @@ def main():
         metavar="FILE",
         help="Path to a custom ignore file (same format as .extractignore)"
     )
+    parser.add_argument(
+        "--no-defaults", action="store_true",
+        help="Disable built-in default exclusions (node_modules, .venv, __pycache__, etc.)"
+    )
     args = parser.parse_args()
     MODEL_NAME = args.model
 
@@ -661,15 +665,18 @@ def main():
     if not docs_dir.exists():
         sys.exit(f"ERROR: docs directory not found: {docs_dir}")
 
-    exclude_dirs = build_exclude_set(
+    ignore_spec = build_ignore_spec(
         docs_dir,
         respect_gitignore=not args.no_gitignore,
         extra_excludes=args.exclude,
         ignore_path=args.ignore_path,
+        no_defaults=args.no_defaults,
     )
+    print(ignore_spec.summary())
+    print()
     md_files = sorted(
         fp for fp in docs_dir.rglob("*.md")
-        if not is_excluded(fp, docs_dir, exclude_dirs)
+        if not ignore_spec.match(fp) and not is_binary(fp)
     )
     if not md_files:
         sys.exit(f"ERROR: No .md files found under: {docs_dir}")

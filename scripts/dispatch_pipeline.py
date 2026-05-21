@@ -101,7 +101,7 @@ except ImportError:
 
 
 # ── Shared scan configuration ──────────────────────────────────────────────────
-from extract_config import build_exclude_set, is_excluded
+from extract_config import build_ignore_spec, is_binary
 
 # ── File classification ────────────────────────────────────────────────────────
 
@@ -530,25 +530,31 @@ def scan_files(
     extra_excludes: list,
     use_gitignore: bool = True,
     ignore_path: str = None,
+    no_defaults: bool = False,
 ) -> list:
     """
-    Walk root recursively, classify each file, skip excluded dirs.
+    Walk root recursively, classify each file, skip excluded dirs and binary files.
     Returns list of (path, category) tuples, sorted by path.
 
-    Exclusions are resolved via extract_config.build_exclude_set which merges:
-      DEFAULT_EXCLUDE_DIRS + .gitignore + all .extractignore files + ignore_path + extra_excludes.
+    Exclusions are resolved via extract_config.build_ignore_spec which merges:
+      DEFAULT_EXCLUDE_DIRS + all .gitignore files (scoped) + all .extractignore files + ignore_path + extra_excludes.
     """
-    exclude_dirs = build_exclude_set(
+    ignore_spec = build_ignore_spec(
         root,
         respect_gitignore=use_gitignore,
         extra_excludes=extra_excludes,
         ignore_path=ignore_path,
+        no_defaults=no_defaults,
     )
+    print(ignore_spec.summary())
+    print()
     classified = []
     for path in sorted(root.rglob("*")):
         if not path.is_file():
             continue
-        if is_excluded(path, root, exclude_dirs):
+        if ignore_spec.match(path):
+            continue
+        if is_binary(path):
             continue
         category = classify(path)
         if category == "skip":
@@ -731,6 +737,10 @@ def main() -> None:
         help="Path to a custom ignore file (same format as .extractignore)"
     )
     parser.add_argument(
+        "--no-defaults", action="store_true",
+        help="Disable built-in default exclusions (node_modules, .venv, __pycache__, etc.)"
+    )
+    parser.add_argument(
         "--model-prose", default="nuextract3",
         help="Ollama model name for prose files (default: nuextract3)"
     )
@@ -759,6 +769,7 @@ def main() -> None:
         root, args.exclude,
         use_gitignore=use_gitignore,
         ignore_path=args.ignore_path,
+        no_defaults=args.no_defaults,
     )
 
     if not classified:

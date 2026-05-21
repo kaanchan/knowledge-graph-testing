@@ -97,7 +97,7 @@ def _run_with_interrupt(fn, *args, **kwargs):
 
 
 # ── Shared scan configuration ──────────────────────────────────────────────────
-from extract_config import build_exclude_set, is_excluded
+from extract_config import build_ignore_spec, is_binary
 
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
@@ -467,6 +467,10 @@ def main():
         metavar="FILE",
         help="Path to a custom ignore file (same format as .extractignore)"
     )
+    parser.add_argument(
+        "--no-defaults", action="store_true",
+        help="Disable built-in default exclusions (node_modules, .venv, __pycache__, etc.)"
+    )
     args = parser.parse_args()
 
     pid = os.getpid()
@@ -483,16 +487,20 @@ def main():
         slice_dir = Path(args.test_slice_dir)
         if not slice_dir.exists():
             sys.exit(f"ERROR: --test-slice-dir not found: {slice_dir}")
-        exclude_dirs = build_exclude_set(
+        ignore_spec = build_ignore_spec(
             slice_dir,
             respect_gitignore=not args.no_gitignore,
             extra_excludes=args.exclude,
             ignore_path=args.ignore_path,
+            no_defaults=args.no_defaults,
         )
+        print(ignore_spec.summary())
+        print()
         file_list = sorted(
             f for f in slice_dir.rglob("*")
             if f.suffix in SUPPORTED_EXTENSIONS
-            and not is_excluded(f, slice_dir, exclude_dirs)
+            and not ignore_spec.match(f)
+            and not is_binary(f)
         )
 
     if not file_list:
