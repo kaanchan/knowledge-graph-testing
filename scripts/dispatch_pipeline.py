@@ -1143,9 +1143,8 @@ def main() -> None:
     except KeyboardInterrupt:
         _stop_event.set()
         aborted = True
-        print("\n\n  Ctrl+C received -- writing partial results and unloading models...")
-        print("  (Ctrl+C again will force quit but models may stay in VRAM)")
-        # Suppress further Ctrl+C so a rapid double-press doesn't skip unloading
+        print("\n\n  Ctrl+C received -- unloading models and saving partial results...")
+        # Suppress further Ctrl+C so rapid double-press doesn't skip unloading
         signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     # Map model keys ("nuextract3" / "phi4") to actual Ollama model names
