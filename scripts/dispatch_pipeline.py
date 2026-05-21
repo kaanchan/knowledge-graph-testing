@@ -100,6 +100,9 @@ except ImportError:
         return int(len(text.split()) / 0.75)
 
 
+# ── Shared scan configuration ──────────────────────────────────────────────────
+from extract_config import build_exclude_set, is_excluded
+
 # ── File classification ────────────────────────────────────────────────────────
 
 # Maps category → set of lowercase extensions that belong to it.
@@ -171,15 +174,6 @@ FILE_ROUTING: dict[str, set] = {
     },
 }
 
-# Directories always excluded from scanning (in addition to --exclude args)
-DEFAULT_EXCLUDE_DIRS: set = {
-    ".git", "node_modules", "__pycache__", ".venv", "venv", "env",
-    "dist", "build", "target", ".tox", ".mypy_cache", ".pytest_cache",
-    # Session / tool state directories
-    ".claude", ".remember",
-    # Previously generated extraction outputs (avoid circular indexing)
-    "responses",
-}
 
 
 def classify(path: Path) -> str:
@@ -512,30 +506,6 @@ def _progress_line(done: int, total: int, recent_times: list) -> str:
 
 # ── Directory scanning ─────────────────────────────────────────────────────────
 
-def _parse_gitignore_dirs(root: Path) -> set:
-    """
-    Read .gitignore at root and extract simple directory names to skip.
-    Handles bare names (node_modules, .venv) and trailing-slash entries (dist/).
-    Does not handle complex glob patterns or negations -- use pathspec for that.
-    """
-    gitignore = root / ".gitignore"
-    if not gitignore.exists():
-        return set()
-    dirs: set = set()
-    try:
-        for line in gitignore.read_text(encoding="utf-8", errors="replace").splitlines():
-            line = line.strip()
-            if not line or line.startswith("#") or line.startswith("!"):
-                continue
-            name = line.rstrip("/")
-            # Only take simple names: no path separators, no wildcards
-            if "/" not in name and "\\" not in name and "*" not in name and "?" not in name and "." not in name[1:]:
-                dirs.add(name.lower())
-    except Exception:
-        pass
-    return dirs
-
-
 def _load_existing(output_path: Path) -> tuple:
     """
     Load a previous output JSON to support resume.
@@ -555,26 +525,30 @@ def _load_existing(output_path: Path) -> tuple:
         return [], set()
 
 
-def scan_files(root: Path, extra_excludes: list, use_gitignore: bool = True) -> list:
+def scan_files(
+    root: Path,
+    extra_excludes: list,
+    use_gitignore: bool = True,
+    ignore_path: str = None,
+) -> list:
     """
-    Walk root recursively, skip excluded dirs, classify each file.
+    Walk root recursively, classify each file, skip excluded dirs.
     Returns list of (path, category) tuples, sorted by path.
-    Skips files in the "skip" category.
-    Reads .gitignore at root and merges simple dir-name entries into the exclusion set.
-    """
-    exclude_dirs = DEFAULT_EXCLUDE_DIRS | {e.lower() for e in extra_excludes}
-    if use_gitignore:
-        gitignore_dirs = _parse_gitignore_dirs(root)
-        if gitignore_dirs:
-            exclude_dirs = exclude_dirs | gitignore_dirs
 
+    Exclusions are resolved via extract_config.build_exclude_set which merges:
+      DEFAULT_EXCLUDE_DIRS + .gitignore + all .extractignore files + ignore_path + extra_excludes.
+    """
+    exclude_dirs = build_exclude_set(
+        root,
+        respect_gitignore=use_gitignore,
+        extra_excludes=extra_excludes,
+        ignore_path=ignore_path,
+    )
     classified = []
     for path in sorted(root.rglob("*")):
         if not path.is_file():
             continue
-        # Check every ancestor directory component against the exclusion set
-        parts_lower = {p.lower() for p in path.relative_to(root).parts[:-1]}
-        if parts_lower & exclude_dirs:
+        if is_excluded(path, root, exclude_dirs):
             continue
         category = classify(path)
         if category == "skip":
@@ -749,7 +723,12 @@ def main() -> None:
     )
     parser.add_argument(
         "--no-gitignore", action="store_true",
-        help="Ignore .gitignore when scanning (process all non-excluded files)"
+        help="Do not read .gitignore when building the exclusion list"
+    )
+    parser.add_argument(
+        "--ignore-path", default=None,
+        metavar="FILE",
+        help="Path to a custom ignore file (same format as .extractignore)"
     )
     parser.add_argument(
         "--model-prose", default="nuextract3",
@@ -776,7 +755,11 @@ def main() -> None:
     # Scan and classify
     print(f"Scanning {root} ...")
     use_gitignore = not args.no_gitignore
-    classified = scan_files(root, args.exclude, use_gitignore=use_gitignore)
+    classified = scan_files(
+        root, args.exclude,
+        use_gitignore=use_gitignore,
+        ignore_path=args.ignore_path,
+    )
 
     if not classified:
         sys.exit(

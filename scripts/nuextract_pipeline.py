@@ -90,13 +90,8 @@ def _run_with_interrupt(fn, *args, **kwargs):
     return result[0]
 
 
-# ── Default directory exclusions ───────────────────────────────────────────────
-
-_DEFAULT_EXCLUDE_DIRS: set = {
-    ".git", ".venv", "venv", "env", "node_modules", "__pycache__",
-    ".tox", ".mypy_cache", ".pytest_cache", "dist", "build", "target",
-    ".claude", ".remember", "responses",
-}
+# ── Shared scan configuration ──────────────────────────────────────────────────
+from extract_config import build_exclude_set, is_excluded
 
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
@@ -642,6 +637,15 @@ def main():
         metavar="DIR",
         help="Extra directory names to skip (e.g. --exclude tests fixtures)"
     )
+    parser.add_argument(
+        "--no-gitignore", action="store_true",
+        help="Do not read .gitignore when building the exclusion list"
+    )
+    parser.add_argument(
+        "--ignore-path", default=None,
+        metavar="FILE",
+        help="Path to a custom ignore file (same format as .extractignore)"
+    )
     args = parser.parse_args()
     MODEL_NAME = args.model
 
@@ -657,14 +661,18 @@ def main():
     if not docs_dir.exists():
         sys.exit(f"ERROR: docs directory not found: {docs_dir}")
 
-    exclude_dirs = _DEFAULT_EXCLUDE_DIRS | {e.lower() for e in (args.exclude or [])}
+    exclude_dirs = build_exclude_set(
+        docs_dir,
+        respect_gitignore=not args.no_gitignore,
+        extra_excludes=args.exclude,
+        ignore_path=args.ignore_path,
+    )
     md_files = sorted(
         fp for fp in docs_dir.rglob("*.md")
-        if not ({p.lower() for p in fp.relative_to(docs_dir).parts[:-1]} & exclude_dirs)
+        if not is_excluded(fp, docs_dir, exclude_dirs)
     )
     if not md_files:
         sys.exit(f"ERROR: No .md files found under: {docs_dir}")
-    print(f"  (Excluded dirs: {', '.join(sorted(exclude_dirs))})")
 
     print(f"Found {len(md_files)} markdown file(s) under {docs_dir}")
     print(f"Model: {MODEL_NAME}")

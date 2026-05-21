@@ -96,13 +96,8 @@ def _run_with_interrupt(fn, *args, **kwargs):
     return result[0]
 
 
-# ── Default directory exclusions ───────────────────────────────────────────────
-
-_DEFAULT_EXCLUDE_DIRS: set = {
-    ".git", ".venv", "venv", "env", "node_modules", "__pycache__",
-    ".tox", ".mypy_cache", ".pytest_cache", "dist", "build", "target",
-    ".claude", ".remember", "responses",
-}
+# ── Shared scan configuration ──────────────────────────────────────────────────
+from extract_config import build_exclude_set, is_excluded
 
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
@@ -463,6 +458,15 @@ def main():
         metavar="DIR",
         help="Extra directory names to skip (e.g. --exclude tests fixtures)"
     )
+    parser.add_argument(
+        "--no-gitignore", action="store_true",
+        help="Do not read .gitignore when building the exclusion list"
+    )
+    parser.add_argument(
+        "--ignore-path", default=None,
+        metavar="FILE",
+        help="Path to a custom ignore file (same format as .extractignore)"
+    )
     args = parser.parse_args()
 
     pid = os.getpid()
@@ -473,20 +477,23 @@ def main():
     preflight_check(args.model, args.api_base)
 
     # Collect files
-    exclude_dirs = _DEFAULT_EXCLUDE_DIRS | {e.lower() for e in (args.exclude or [])}
-
     if args.files:
         file_list = [Path(f) for f in args.files]
     else:
         slice_dir = Path(args.test_slice_dir)
         if not slice_dir.exists():
             sys.exit(f"ERROR: --test-slice-dir not found: {slice_dir}")
+        exclude_dirs = build_exclude_set(
+            slice_dir,
+            respect_gitignore=not args.no_gitignore,
+            extra_excludes=args.exclude,
+            ignore_path=args.ignore_path,
+        )
         file_list = sorted(
             f for f in slice_dir.rglob("*")
             if f.suffix in SUPPORTED_EXTENSIONS
-            and not ({p.lower() for p in f.relative_to(slice_dir).parts[:-1]} & exclude_dirs)
+            and not is_excluded(f, slice_dir, exclude_dirs)
         )
-        print(f"  (Excluded dirs: {', '.join(sorted(exclude_dirs))})")
 
     if not file_list:
         sys.exit("ERROR: No files found to process.")
