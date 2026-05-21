@@ -395,8 +395,8 @@ def clean_output(paths, yes: bool = False) -> bool:
 
     existing = [p for p in paths if p.exists()]
     if not existing:
-        print("  Nothing to clean — no output files found.")
-        return False
+        print("  Nothing to clean — output already absent, proceeding fresh.")
+        return True
 
     if not yes:
         print("  The following file(s) will be permanently deleted:")

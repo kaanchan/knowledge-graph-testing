@@ -194,9 +194,10 @@ class TestCleanOutput:
         assert result is True
         assert all(not f.exists() for f in files)
 
-    def test_nonexistent_path_returns_false(self, tmp_path):
+    def test_nonexistent_path_returns_true(self, tmp_path):
+        # Nothing to clean = already clean = success, run should proceed
         result = clean_output(tmp_path / "ghost.json", yes=True)
-        assert result is False
+        assert result is True
 
     def test_mix_existing_nonexistent_deletes_existing(self, tmp_path):
         real = tmp_path / "real.json"
