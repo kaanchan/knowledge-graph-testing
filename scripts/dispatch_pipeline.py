@@ -758,7 +758,7 @@ def _preflight_model(bare_name: str, api_base: str, install_hint: str) -> bool:
         return True  # assume present; let the first extraction call surface the error
 
 
-def _warmup_model(bare_name: str) -> None:
+def _warmup_model(bare_name: str, warmed: set) -> None:
     """Send a 1-token request to load the model into VRAM before the main loop."""
     print(f"  Warming up {bare_name}...", end="", flush=True)
     t0 = time.time()
@@ -769,12 +769,17 @@ def _warmup_model(bare_name: str) -> None:
             options={"num_predict": 1},
         )
         print(f" ready ({time.time() - t0:.0f}s)")
+        warmed.add(bare_name)
     except Exception as exc:
         print(f" WARNING: warmup failed ({exc})")
 
 
-def preflight(model_prose: str, model_code_litellm: str, api_base: str, model_judge: str = None) -> None:
-    """Check Ollama is up, both models are available, and warm both into VRAM."""
+def preflight(model_prose: str, model_code_litellm: str, api_base: str, model_judge: str = None) -> set:
+    """Check Ollama is up, both models are available, and warm both into VRAM.
+
+    Returns the set of model names successfully warmed up, so callers can
+    ensure all warmed models are unloaded even if they were never used for extraction.
+    """
     _preflight_ollama(api_base)
 
     bare_prose = model_prose
@@ -802,13 +807,16 @@ def preflight(model_prose: str, model_code_litellm: str, api_base: str, model_ju
 
     bare_judge = model_judge.split("/", 1)[-1] if model_judge and "/" in model_judge else model_judge
 
+    warmed: set = set()
     print("  Warming up models (loads weights into VRAM — first file won't stall):")
     if prose_ok:
-        _warmup_model(bare_prose)
+        _warmup_model(bare_prose, warmed)
     if code_ok:
-        _warmup_model(bare_code)
+        _warmup_model(bare_code, warmed)
     if bare_judge and bare_judge != bare_code:
-        _warmup_model(bare_judge)
+        _warmup_model(bare_judge, warmed)
+
+    return warmed
 
     print()
 
@@ -1016,7 +1024,7 @@ def main() -> None:
 
     # Preflight
     _init_ollama_client(args.api_base)
-    preflight(args.model_prose, args.model_code, args.api_base, args.model_judge)
+    warmed_models = preflight(args.model_prose, args.model_code, args.api_base, args.model_judge)
 
     # Routing helpers
     def _primary_for(cat: str) -> str:
@@ -1153,7 +1161,7 @@ def main() -> None:
         "nuextract3": args.model_prose,
         "phi4":       args.model_code.split("/", 1)[-1] if "/" in args.model_code else args.model_code,
     }
-    models_to_unload = {model_key_to_name.get(k, k) for k in models_invoked}
+    models_to_unload = {model_key_to_name.get(k, k) for k in models_invoked} | warmed_models
 
     _write_and_report(
         results, existing_results, len(classified), output_path,
