@@ -34,6 +34,7 @@ import argparse
 import glob
 import os
 import sys
+import threading
 import time
 import urllib.request
 from pathlib import Path
@@ -52,6 +53,51 @@ except ImportError:
     # Fallback: rough word-based estimate (1 token ≈ 0.75 words)
     def count_tokens(text: str) -> int:
         return int(len(text.split()) / 0.75)
+
+# ── Ctrl+C / interrupt support ────────────────────────────────────────────────
+# ollama.chat() blocks on a socket read and prevents KeyboardInterrupt from
+# firing. Running each call in a daemon thread and polling every 100ms keeps
+# the main thread free to receive signals at all times.
+
+_stop_event = threading.Event()
+
+
+def _run_with_interrupt(fn, *args, **kwargs):
+    """
+    Run fn(*args, **kwargs) in a daemon thread.
+    Polls every 100ms so the main thread can receive KeyboardInterrupt.
+    Raises KeyboardInterrupt immediately if _stop_event is set.
+    Re-raises any exception from the worker thread.
+    """
+    result = [None]
+    exc = [None]
+
+    def _worker():
+        try:
+            result[0] = fn(*args, **kwargs)
+        except Exception as e:
+            exc[0] = e
+
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
+    while t.is_alive():
+        if _stop_event.is_set():
+            raise KeyboardInterrupt
+        t.join(timeout=0.1)
+
+    if exc[0] is not None:
+        raise exc[0]
+    return result[0]
+
+
+# ── Default directory exclusions ───────────────────────────────────────────────
+
+_DEFAULT_EXCLUDE_DIRS: set = {
+    ".git", ".venv", "venv", "env", "node_modules", "__pycache__",
+    ".tox", ".mypy_cache", ".pytest_cache", "dist", "build", "target",
+    ".claude", ".remember", "responses",
+}
+
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
 
@@ -415,7 +461,8 @@ def nuextract_call(template: str, text: str) -> dict:
     """
     if _is_nuextract3(MODEL_NAME):
         prompt = PROMPT_TEMPLATE.format(json_template=template, input_text=text)
-        response = ollama.chat(
+        response = _run_with_interrupt(
+            ollama.chat,
             model=MODEL_NAME,
             messages=[{"role": "user", "content": prompt}],
             think=False,
@@ -429,7 +476,8 @@ def nuextract_call(template: str, text: str) -> dict:
             f"Return ONLY valid JSON matching this schema (no explanation):\n"
             f"{template}\n\nText:\n{text}"
         )
-        response = ollama.chat(
+        response = _run_with_interrupt(
+            ollama.chat,
             model=MODEL_NAME,
             messages=[{"role": "user", "content": instruction}],
             options={"temperature": 0.0},
@@ -437,7 +485,8 @@ def nuextract_call(template: str, text: str) -> dict:
         raw = response["message"]["content"].strip()
     else:
         prompt = PROMPT_TEMPLATE.format(json_template=template, input_text=text)
-        response = ollama.generate(
+        response = _run_with_interrupt(
+            ollama.generate,
             model=MODEL_NAME,
             prompt=prompt,
             options={"temperature": 0.0},   # CRITICAL — Ollama default 0.7 causes hallucinations
@@ -588,6 +637,11 @@ def main():
         "--force", action="store_true",
         help="Reprocess all files even if already present in the output (disables resume)"
     )
+    parser.add_argument(
+        "--exclude", nargs="*", default=[],
+        metavar="DIR",
+        help="Extra directory names to skip (e.g. --exclude tests fixtures)"
+    )
     args = parser.parse_args()
     MODEL_NAME = args.model
 
@@ -603,9 +657,14 @@ def main():
     if not docs_dir.exists():
         sys.exit(f"ERROR: docs directory not found: {docs_dir}")
 
-    md_files = sorted(docs_dir.rglob("*.md"))
+    exclude_dirs = _DEFAULT_EXCLUDE_DIRS | {e.lower() for e in (args.exclude or [])}
+    md_files = sorted(
+        fp for fp in docs_dir.rglob("*.md")
+        if not ({p.lower() for p in fp.relative_to(docs_dir).parts[:-1]} & exclude_dirs)
+    )
     if not md_files:
         sys.exit(f"ERROR: No .md files found under: {docs_dir}")
+    print(f"  (Excluded dirs: {', '.join(sorted(exclude_dirs))})")
 
     print(f"Found {len(md_files)} markdown file(s) under {docs_dir}")
     print(f"Model: {MODEL_NAME}")
@@ -655,6 +714,7 @@ def main():
                 recent_times.pop(0)
             results.append(record)
     except KeyboardInterrupt:
+        _stop_event.set()
         aborted = True
         print("\n\n  Ctrl+C received -- writing partial results and shutting down...")
 

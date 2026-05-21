@@ -40,6 +40,7 @@ import json
 import argparse
 import os
 import sys
+import threading
 import time
 import urllib.request
 from pathlib import Path
@@ -66,6 +67,43 @@ except ImportError:
     def count_tokens(text: str) -> int:
         # Rough estimate: 1 token ≈ 0.75 words
         return int(len(text.split()) / 0.75)
+
+# ── Ctrl+C / interrupt support ────────────────────────────────────────────────
+
+_stop_event = threading.Event()
+
+
+def _run_with_interrupt(fn, *args, **kwargs):
+    """Run fn in a daemon thread, polling every 100ms for KeyboardInterrupt."""
+    result = [None]
+    exc = [None]
+
+    def _worker():
+        try:
+            result[0] = fn(*args, **kwargs)
+        except Exception as e:
+            exc[0] = e
+
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
+    while t.is_alive():
+        if _stop_event.is_set():
+            raise KeyboardInterrupt
+        t.join(timeout=0.1)
+
+    if exc[0] is not None:
+        raise exc[0]
+    return result[0]
+
+
+# ── Default directory exclusions ───────────────────────────────────────────────
+
+_DEFAULT_EXCLUDE_DIRS: set = {
+    ".git", ".venv", "venv", "env", "node_modules", "__pycache__",
+    ".tox", ".mypy_cache", ".pytest_cache", "dist", "build", "target",
+    ".claude", ".remember", "responses",
+}
+
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
 
@@ -354,7 +392,7 @@ def extract_file(kg: KGGen, file_path: str) -> dict:
             print(f"    Chunk {i + 1}/{len(chunks)}")
 
         try:
-            result = kg.generate(input_data=chunk)
+            result = _run_with_interrupt(kg.generate, input_data=chunk)
             # kg-gen returns an object with .entities, .edges, .relations attributes
             # depending on version — handle both dict and object forms
             if isinstance(result, dict):
@@ -420,6 +458,11 @@ def main():
         "--force", action="store_true",
         help="Reprocess all files even if already present in the output (disables resume)"
     )
+    parser.add_argument(
+        "--exclude", nargs="*", default=[],
+        metavar="DIR",
+        help="Extra directory names to skip (e.g. --exclude tests fixtures)"
+    )
     args = parser.parse_args()
 
     pid = os.getpid()
@@ -430,6 +473,8 @@ def main():
     preflight_check(args.model, args.api_base)
 
     # Collect files
+    exclude_dirs = _DEFAULT_EXCLUDE_DIRS | {e.lower() for e in (args.exclude or [])}
+
     if args.files:
         file_list = [Path(f) for f in args.files]
     else:
@@ -439,7 +484,9 @@ def main():
         file_list = sorted(
             f for f in slice_dir.rglob("*")
             if f.suffix in SUPPORTED_EXTENSIONS
+            and not ({p.lower() for p in f.relative_to(slice_dir).parts[:-1]} & exclude_dirs)
         )
+        print(f"  (Excluded dirs: {', '.join(sorted(exclude_dirs))})")
 
     if not file_list:
         sys.exit("ERROR: No files found to process.")
@@ -504,6 +551,7 @@ def main():
                 recent_times.pop(0)
             results.append(record)
     except KeyboardInterrupt:
+        _stop_event.set()
         aborted = True
         print("\n\n  Ctrl+C received -- writing partial results and shutting down...")
 

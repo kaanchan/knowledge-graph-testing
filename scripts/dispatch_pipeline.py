@@ -45,9 +45,38 @@ import json
 import argparse
 import os
 import sys
+import threading
 import time
 import urllib.request
 from pathlib import Path
+
+# ── Ctrl+C / interrupt support ────────────────────────────────────────────────
+
+_stop_event = threading.Event()
+
+
+def _run_with_interrupt(fn, *args, **kwargs):
+    """Run fn in a daemon thread, polling every 100ms for KeyboardInterrupt."""
+    result = [None]
+    exc = [None]
+
+    def _worker():
+        try:
+            result[0] = fn(*args, **kwargs)
+        except Exception as e:
+            exc[0] = e
+
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
+    while t.is_alive():
+        if _stop_event.is_set():
+            raise KeyboardInterrupt
+        t.join(timeout=0.1)
+
+    if exc[0] is not None:
+        raise exc[0]
+    return result[0]
+
 
 # ── Optional imports (checked at runtime with clear messages) ──────────────────
 
@@ -231,7 +260,8 @@ def _extract_nuextract3(text: str, model: str, api_base: str) -> dict:
 
     for chunk in chunks:
         chunk_prompt = f"<|input|>\n### Template:\n{_NUEXTRACT_TEMPLATE}\n### Text:\n{chunk}\n\n<|output|>"
-        response = _ollama_lib.chat(
+        response = _run_with_interrupt(
+            _ollama_lib.chat,
             model=model,
             messages=[{"role": "user", "content": chunk_prompt}],
             think=False,
@@ -270,7 +300,7 @@ def _extract_phi4(text: str, model: str, api_base: str) -> dict:
 
     for chunk in chunks:
         try:
-            result = kg.generate(input_data=chunk)
+            result = _run_with_interrupt(kg.generate, input_data=chunk)
             if isinstance(result, dict):
                 all_entities.extend(result.get("entities", []))
                 all_edges.extend(result.get("edges", []))
@@ -841,6 +871,7 @@ def main() -> None:
                 recent_times.pop(0)
             results.append(record)
     except KeyboardInterrupt:
+        _stop_event.set()
         aborted = True
         print("\n\n  Ctrl+C received -- writing partial results and shutting down...")
 
