@@ -1,5 +1,16 @@
 # PROGRESS
 
+## 2026-05-21 — API migration, docs overhaul, test suite, user guide refs #10
+
+- Migrated all 3 pipeline scripts to new `extract_config.py` API (`build_ignore_spec`, `is_binary`, `IgnoreSpec.match`); added `--no-defaults` flag to all three
+- Added `pathspec` as soft requirement to `requirements.txt` (fallback documented)
+- Ran merge producing 1,875 nodes (33 fused), 1,917 edges from ralph graphify + repo nuextract output
+- Rewrote README.md; added `docs/architecture.md`, `docs/scripts-reference.md`
+- Built 119-unit test suite + integration stubs: `tests/conftest.py`, `test_extract_config.py`, `test_dispatch_classify.py`, `test_validate_graphify.py`, `test_merge_graphs.py`, `tests/integration/`; pytest.ini with integration marker
+- Wrote `docs/guide.md` — 12-section, 895-line comprehensive user guide (install → interpret → troubleshoot)
+- All committed and pushed to `issue-10-graph-utilisation`
+- Open: pathspec deprecation warning (`gitwildmatch` → `gitignore`), stale nuextract-output.json (needs `--force` rerun), #10 not yet closed
+
 ## 2026-05-20 — Step 5 complete + nuextract3 pipeline + merge graph
 
 - Filled comparison-template.md with actual extraction results (Steps 1–4)
@@ -99,3 +110,4 @@
 - Initialized folder structure: `prompts/`, `scripts/`, `docs/`, `tests/`, `r&d/`, `.claude/pm/`, `.claude/tmp/`
 - Opened GH issue #1 for offline semantic tool research
 - Created `r&d/<#1>-find-offline-semantic-tool/` with research prompt
+
