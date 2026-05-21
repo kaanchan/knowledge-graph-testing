@@ -450,6 +450,9 @@ def _write_and_report(
         m = r.get("model_used", "unknown")
         by_model[m] = by_model.get(m, 0) + 1
 
+    empty_files = [r.get("source_file", "?") for r in results
+                   if not r.get("entities") and not r.get("relations") and "error" not in r]
+
     status = "ABORTED -- Ctrl+C" if aborted else "DISPATCH COMPLETE"
     sep = "=" * 68
 
@@ -462,17 +465,22 @@ def _write_and_report(
     print()
     print(f"  --- This run ---")
     print(f"  Files targeted:         {total_planned}")
-    print(f"  Files completed:        {len(results)}", end="")
+    completed_line = f"  Files completed:        {len(results)}"
     if aborted:
-        print(f"  ({not_reached} not reached)")
-    else:
-        print()
-    print(f"  Fallback triggered:     {used_fallback} file(s)")
+        completed_line += f"  ({not_reached} not reached)"
+    print(completed_line)
     print(f"  Errors:                 {errored} file(s)")
+    print(f"  Empty output:           {len(empty_files)} file(s)")
+    if empty_files:
+        for f in empty_files:
+            print(f"                            {f}")
+    print()
+    print(f"  --- Model usage (this run) ---")
     if by_model:
-        print(f"  Model usage:")
         for m, count in sorted(by_model.items()):
-            print(f"    {m:<20} {count} file(s)")
+            fallback_note = " (fallback)" if m != sorted(by_model.keys())[0] else " (primary)"
+            print(f"    {m:<28} {count} file(s)")
+    print(f"  Fallback triggered:     {used_fallback} file(s)")
     print()
     print(f"  --- Corpus total (including previous runs) ---")
     print(f"  Previously processed:   {prev_count} file(s)")

@@ -32,12 +32,43 @@ GH issue: #5 (ref #8)
 import json
 import argparse
 import glob
+import logging
 import os
 import sys
 import threading
 import time
 import urllib.request
 from pathlib import Path
+
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+
+class _CLIFormatter(logging.Formatter):
+    """Clean formatter: no prefix for INFO, level label for WARN+, [debug] for DEBUG."""
+    _PREFIXES = {
+        logging.DEBUG:    "  [debug] ",
+        logging.INFO:     "  ",
+        logging.WARNING:  "  WARNING: ",
+        logging.ERROR:    "  ERROR: ",
+        logging.CRITICAL: "  FATAL: ",
+    }
+    def format(self, record):
+        return self._PREFIXES.get(record.levelno, "  ") + record.getMessage()
+
+
+log = logging.getLogger("nuextract")
+
+
+def _setup_logging(level: int, log_file: str = None) -> None:
+    log.setLevel(level)
+    fmt = _CLIFormatter()
+    h = logging.StreamHandler(sys.stderr)
+    h.setFormatter(fmt)
+    log.addHandler(h)
+    if log_file:
+        fh = logging.FileHandler(log_file, encoding="utf-8")
+        fh.setFormatter(fmt)
+        log.addHandler(fh)
 
 try:
     import ollama
@@ -206,7 +237,7 @@ def _elapsed_str(seconds: float) -> str:
 
 def _unload_model(model_name: str, api_base: str) -> None:
     """Tell Ollama to evict the model from GPU/CPU memory immediately."""
-    print(f"  Unloading '{model_name}' from memory...", end=" ", flush=True)
+    log.info(f"Unloading '{model_name}' from memory...")
     try:
         payload = json.dumps({
             "model": model_name,
@@ -221,9 +252,9 @@ def _unload_model(model_name: str, api_base: str) -> None:
             method="POST",
         )
         urllib.request.urlopen(req, timeout=15)
-        print("done.")
+        log.info("  Unload complete.")
     except Exception as exc:
-        print(f"WARNING: could not unload ({exc})")
+        log.warning(f"could not unload model: {exc}")
 
 
 def _write_and_report(
@@ -249,31 +280,51 @@ def _write_and_report(
     status = "ABORTED -- Ctrl+C" if aborted else "EXTRACTION COMPLETE"
     sep = "=" * 64
 
-    print()
-    print(sep)
-    print(f"  {status}")
-    print(sep)
-    print(f"  PID:              {pid}")
-    print(f"  Total time:       {_elapsed_str(elapsed)}")
-    print(f"  Files planned:    {total_planned}")
-    print(f"  Files completed:  {len(results)}", end="")
+    log.info("")
+    log.info(sep)
+    log.info(status)
+    log.info(sep)
+    log.info(f"PID:              {pid}")
+    log.info(f"Total time:       {_elapsed_str(elapsed)}")
+    log.info(f"Files planned:    {total_planned}")
+    completed_line = f"Files completed:  {len(results)}"
     if aborted:
-        print(f"  ({skipped} not processed)")
-    else:
-        print()
-    print(f"  Docs with output: {docs_with_output} / {len(results)}")
-    print(f"  Entities found:   {total_entities}")
-    print(f"  Relations found:  {total_relations}")
-    print(f"  Output saved:     {output_path}")
+        completed_line += f"  ({skipped} not processed)"
+    log.info(completed_line)
+    empty_files = [r["source_file"] for r in results
+                   if not r.get("entities") and not r.get("relations")]
+    log.info(f"Model:            {model_name}")
+    log.info(f"  With output:    {docs_with_output} / {len(results)} files")
+    if empty_files:
+        log.info(f"  Empty output:   {len(empty_files)} file(s) — prose-poor content (tables,")
+        log.info(f"                  reference docs). Re-run via dispatch_pipeline.py for")
+        log.info(f"                  automatic Phi-4 fallback on these files.")
+        for f in empty_files:
+            log.info(f"                    {f}")
+    log.info(f"Entities found:   {total_entities}")
+    log.info(f"Relations found:  {total_relations}")
+    log.info(f"Output saved:     {output_path}")
     if aborted:
-        print(f"  NOTE: Partial output -- re-run to continue (skipped files not saved).")
-    print()
+        log.info("NOTE: Partial output -- re-run to continue (skipped files not saved).")
+    log.info("")
+    log.debug(json.dumps({
+        "event": "extraction_complete",
+        "elapsed_s": round(elapsed, 2),
+        "model": model_name,
+        "files_completed": len(results),
+        "files_planned": total_planned,
+        "files_with_output": docs_with_output,
+        "files_empty": len(empty_files),
+        "entities": total_entities,
+        "relations": total_relations,
+        "aborted": aborted,
+    }))
     if results:
         _unload_model(model_name, api_base)
     else:
-        print(f"  No files processed -- model was not loaded, nothing to unload.")
-    print(f"  PID {pid} exiting cleanly.")
-    print(sep)
+        log.info("No files processed -- model was not loaded, nothing to unload.")
+    log.info(f"PID {pid} exiting cleanly.")
+    log.info(sep)
 
 
 def _progress_line(done: int, total: int, recent_times: list) -> str:
@@ -298,7 +349,7 @@ def preflight_check(model_name: str, api_base: str = "http://localhost:11434") -
     try:
         urllib.request.urlopen(f"{api_base}/api/tags", timeout=3)
     except Exception:
-        print(_ollama_not_running_msg(api_base))
+        log.error(_ollama_not_running_msg(api_base))
         sys.exit(1)
 
     # 2 — Model availability check
@@ -308,12 +359,12 @@ def preflight_check(model_name: str, api_base: str = "http://localhost:11434") -
         # Tags endpoint returns names like "nuextract3:latest" — strip the tag
         available = [m["name"].split(":")[0] for m in data.get("models", [])]
         if not any(a == model_name or a.startswith(model_name) for a in available):
-            print(_model_not_found_msg(model_name, available))
+            log.error(_model_not_found_msg(model_name, available))
             sys.exit(1)
     except SystemExit:
         raise
     except Exception as exc:
-        print(f"WARNING: Could not verify model list: {exc}\n  Proceeding anyway.")
+        log.warning(f"Could not verify model list: {exc} — proceeding anyway")
 
 
 # ── Constants ─────────────────────────────────────────────────────────────────
@@ -439,6 +490,26 @@ def _is_nuextract3(model_name: str) -> bool:
     return model_name.lower().startswith("nuextract3")
 
 
+def _warmup_model(model_name: str) -> None:
+    """Send a minimal request to load the model into VRAM before the main loop."""
+    log.info(f"Warming up {model_name} (loading into VRAM)...")
+    t0 = time.monotonic()
+    try:
+        _run_with_interrupt(
+            ollama.chat,
+            model=model_name,
+            messages=[{"role": "user", "content": "."}],
+            think=False,
+            options={"temperature": 0.0, "num_predict": 1},
+        )
+        elapsed = time.monotonic() - t0
+        log.info(f"Model ready ({elapsed:.1f}s)")
+        log.debug(f"Warmup latency: {elapsed:.2f}s")
+    except Exception as exc:
+        log.warning(f"warmup failed ({exc}) — continuing anyway")
+    log.info("")
+
+
 def _is_chat_model(model_name: str) -> bool:
     """Return True for instruction-following chat models (phi4, llama, mistral…)."""
     chat_prefixes = ("phi4", "phi-4", "llama", "mistral", "qwen", "gemma")
@@ -542,13 +613,15 @@ def extract_document(file_path: str) -> dict:
     text = raw_text if _is_nuextract3(MODEL_NAME) else _normalise_text(raw_text)
     token_count = count_tokens(text)
 
-    print(f"  Processing: {file_path} (~{token_count} tokens)")
+    log.info(f"Processing: {file_path} (~{token_count} tokens)")
+    log.debug(f"Token count: {token_count} | file: {file_path}")
 
     # Decide whether to use sliding window
     if token_count <= WINDOW_TOKENS:
         chunks = [text]
     else:
-        print(f"    -> Sliding window: {WINDOW_TOKENS} tok / {OVERLAP_TOKENS} overlap")
+        log.info(f"  Sliding window: {WINDOW_TOKENS} tok / {OVERLAP_TOKENS} overlap")
+        log.debug(f"Chunking: {len(chunk_text(text))} chunks estimated")
         chunks = chunk_text(text)
 
     all_entities: list[dict] = []
@@ -556,8 +629,10 @@ def extract_document(file_path: str) -> dict:
 
     for i, chunk in enumerate(chunks):
         if len(chunks) > 1:
-            print(f"    Chunk {i + 1}/{len(chunks)}")
+            log.info(f"  Chunk {i + 1}/{len(chunks)}")
+            log.debug(f"Chunk {i+1}/{len(chunks)}: ~{count_tokens(chunk)} tokens")
 
+        chunk_t0 = time.monotonic()
         if _is_nuextract3(MODEL_NAME):
             # ── Single-pass: entities + relations in one call ──────────────
             result = nuextract_call(COMBINED_TEMPLATE, chunk)
@@ -582,6 +657,11 @@ def extract_document(file_path: str) -> dict:
                 if isinstance(r, dict) and r.get("subject") and r.get("predicate") and r.get("object")
             ]
             all_relations.extend(chunk_relations)
+        chunk_elapsed = time.monotonic() - chunk_t0
+        log.debug(
+            f"Chunk {i+1}/{len(chunks)} done: {len(chunk_entities)}e "
+            f"{len(chunk_relations)}r in {chunk_elapsed:.1f}s"
+        )
 
     # Deduplicate entities by name (case-insensitive)
     seen_entities: set[str] = set()
@@ -658,13 +738,34 @@ def main():
         "--no-defaults", action="store_true",
         help="Disable built-in default exclusions (node_modules, .venv, __pycache__, etc.)"
     )
+    log_group = parser.add_mutually_exclusive_group()
+    log_group.add_argument(
+        "--quiet", action="store_true",
+        help="Suppress INFO output — show warnings and errors only"
+    )
+    log_group.add_argument(
+        "--verbose", action="store_true",
+        help="Show DEBUG output: per-chunk timing, token counts, structured completion stats"
+    )
+    parser.add_argument(
+        "--log", default=None, metavar="FILE",
+        help="Write log output to FILE in addition to stderr"
+    )
     args = parser.parse_args()
     MODEL_NAME = args.model
 
+    if args.verbose:
+        level = logging.DEBUG
+    elif args.quiet:
+        level = logging.WARNING
+    else:
+        level = logging.INFO
+    _setup_logging(level, args.log)
+
     pid = os.getpid()
     start_time = time.monotonic()
-    print(f"  PID {pid}  |  Stop cleanly: Ctrl+C  |  Force kill: taskkill /PID {pid} /F")
-    print()
+    log.info(f"PID {pid}  |  Stop cleanly: Ctrl+C  |  Force kill: taskkill /PID {pid} /F")
+    log.info("")
 
     preflight_check(MODEL_NAME, args.api_base)
 
@@ -680,8 +781,8 @@ def main():
         ignore_path=args.ignore_path,
         no_defaults=args.no_defaults,
     )
-    print(ignore_spec.summary())
-    print()
+    log.info(ignore_spec.summary())
+    log.info("")
     md_files = sorted(
         fp for fp in docs_dir.rglob("*.md")
         if not ignore_spec.match(fp) and not is_binary(fp)
@@ -689,9 +790,9 @@ def main():
     if not md_files:
         sys.exit(f"ERROR: No .md files found under: {docs_dir}")
 
-    print(f"Found {len(md_files)} markdown file(s) under {docs_dir}")
-    print(f"Model: {MODEL_NAME}")
-    print()
+    log.info(f"Found {len(md_files)} markdown file(s) under {docs_dir}")
+    log.info(f"Model: {MODEL_NAME}")
+    log.info("")
 
     # Prepare output path early so partial results can always be saved
     output_dir = Path(args.output_dir)
@@ -712,16 +813,18 @@ def main():
             md_files = [fp for fp in md_files if str(fp.as_posix()) not in already_done]
             skipped = before - len(md_files)
             if skipped:
-                print(f"  Resume: {skipped} file(s) already processed, {len(md_files)} remaining.")
-                print(f"  (Use --force to reprocess everything.)")
-                print()
+                log.info(f"Resume: {skipped} file(s) already processed, {len(md_files)} remaining.")
+                log.info("(Use --force to reprocess everything.)")
+                log.info("")
         except Exception:
             existing_results = []
 
     if not md_files:
-        print("  All files already processed. Nothing to do.")
-        print(f"  Output: {output_path}")
+        log.info("All files already processed. Nothing to do.")
+        log.info(f"Output: {output_path}")
         return
+
+    _warmup_model(MODEL_NAME)
 
     # Run extraction
     aborted = False
@@ -729,22 +832,28 @@ def main():
     recent_times: list = []  # rolling window of last 10 file durations
     try:
         for i, fp in enumerate(md_files):
-            print(_progress_line(i, len(md_files), recent_times))
+            log.info(_progress_line(i, len(md_files), recent_times))
             t0 = time.monotonic()
             try:
                 record = extract_document(str(fp))
             except Exception as exc:
-                print(f"    ERROR: {exc}")
+                log.error(str(exc))
                 record = {"source_file": str(fp.as_posix()), "error": str(exc)}
             elapsed = time.monotonic() - t0
             recent_times.append(elapsed)
             if len(recent_times) > 10:
                 recent_times.pop(0)
             results.append(record)
+            log.debug(
+                f"{fp.name}: {elapsed:.1f}s | "
+                f"{record.get('token_count', 0)} tok | "
+                f"{len(record.get('entities', []))}e "
+                f"{len(record.get('relations', []))}r"
+            )
     except KeyboardInterrupt:
         _stop_event.set()
         aborted = True
-        print("\n\n  Ctrl+C received -- writing partial results and shutting down...")
+        log.warning("Ctrl+C received -- writing partial results and shutting down...")
 
     _write_and_report(
         existing_results + results, len(md_files), output_path,
@@ -752,9 +861,9 @@ def main():
     )
 
     if not aborted:
-        print()
-        print("FLAG FOR REVIEW: Inspect output before deciding whether to extend to Python files.")
-        print("SUCCESS GATE: >= 1 entity + >= 1 relation per doc, no hallucinated entity names.")
+        log.info("")
+        log.info("FLAG FOR REVIEW: Inspect output before deciding whether to extend to Python files.")
+        log.info("SUCCESS GATE: >= 1 entity + >= 1 relation per doc, no hallucinated entity names.")
 
     if aborted:
         sys.exit(130)  # standard exit code for Ctrl+C (128 + SIGINT=2)
