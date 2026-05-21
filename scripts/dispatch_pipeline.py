@@ -384,13 +384,22 @@ _TRIAGE_SCHEMA = {
 }
 
 _TRIAGE_PROMPT = """\
-Classify this document so it can be routed to the best knowledge-graph extraction model.
+Classify this document to route it to the best knowledge-graph extraction model.
+Each category maps to exactly one model — pick the single best fit.
 
-Return content_type as exactly one of:
-- prose      narrative text, explanations, descriptions — NuExtract3 excels here
-- structured tables, flag/option references, lists without surrounding prose — Phi-4 excels here
-- mixed      has substantial prose sections AND tables/structured sections
-- skip       no extractable facts (empty templates, placeholder-only, pure diagrams)
+- prose      Pure narrative: explanations, descriptions, running text with no tables or code.
+             → routed to NuExtract3 (specialised prose extractor)
+- structured Tables, CLI flag references, key-value lists, code snippets, config blocks.
+             Any document where the facts live in structure rather than sentences.
+             → routed to Phi-4 (handles structure and code well)
+- mixed      Has BOTH substantial prose paragraphs AND tables/code/structured sections
+             where either alone would miss important facts.
+             → routed to Phi-4 (better at handling heterogeneous content)
+- skip       No extractable facts: empty files, pure diagrams, placeholder templates.
+             → not processed
+
+When in doubt between prose and mixed, prefer mixed if there are any tables or code blocks.
+When in doubt between structured and mixed, prefer structured.
 
 Document excerpt (first 3000 chars):
 {excerpt}"""
@@ -1082,7 +1091,7 @@ def main() -> None:
             elif triage_cat == "structured":
                 primary, fallback = "phi4", None
             elif triage_cat == "mixed":
-                primary, fallback = "nuextract3", "phi4"  # always fall back for mixed
+                primary, fallback = "phi4", None  # mixed has structure — phi4 handles it directly
             elif triage_cat == "skip":
                 record = {
                     "source_file":  str(fp.as_posix()),
