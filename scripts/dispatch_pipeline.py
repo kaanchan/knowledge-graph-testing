@@ -52,6 +52,7 @@ GH issue: #10 (ref #8)
 import json
 import argparse
 import os
+import signal
 import sys
 import threading
 import time
@@ -1142,7 +1143,10 @@ def main() -> None:
     except KeyboardInterrupt:
         _stop_event.set()
         aborted = True
-        print("\n\n  Ctrl+C received -- writing partial results and shutting down...")
+        print("\n\n  Ctrl+C received -- writing partial results and unloading models...")
+        print("  (Ctrl+C again will force quit but models may stay in VRAM)")
+        # Suppress further Ctrl+C so a rapid double-press doesn't skip unloading
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     # Map model keys ("nuextract3" / "phi4") to actual Ollama model names
     model_key_to_name = {
@@ -1156,6 +1160,7 @@ def main() -> None:
         start_time, pid, aborted, models_to_unload, args.api_base,
     )
 
+    signal.signal(signal.SIGINT, signal.SIG_DFL)  # restore default before exit
     if aborted:
         sys.exit(130)
 
