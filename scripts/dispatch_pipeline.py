@@ -1113,7 +1113,8 @@ def main() -> None:
                 primary  = _primary_for(category)
                 fallback = _fallback_for(category)
 
-            print(f"  [{category:<8}] {fp.name}  -> {primary}")
+            routing_label = triage_cat if triage_cat else category
+            print(f"  [{routing_label:<8}] {fp.name}  -> {primary}")
 
             t0 = time.monotonic()
             try:
