@@ -93,6 +93,14 @@ try:
 except ImportError:
     _ollama_lib = None
 
+_ollama_client = None  # initialised in main() once api_base is known
+
+
+def _init_ollama_client(api_base: str) -> None:
+    global _ollama_client
+    if _ollama_lib is not None:
+        _ollama_client = _ollama_lib.Client(host=api_base)
+
 try:
     from kg_gen import KGGen as _KGGen
 except ImportError:
@@ -184,8 +192,19 @@ FILE_ROUTING: dict[str, set] = {
 
 
 
+_SKIP_NAMES = frozenset({".gitkeep", ".keep", ".gitplaceholder"})
+
+
 def classify(path: Path) -> str:
     """Return the routing category for a file based on its extension."""
+    # Placeholder / zero-byte files — never worth processing
+    if path.name in _SKIP_NAMES:
+        return "skip"
+    try:
+        if path.stat().st_size == 0:
+            return "skip"
+    except OSError:
+        pass  # non-existent path (e.g. in unit tests) — proceed to extension check
     ext = path.suffix.lower()
     # Dot-only names like .gitignore, .env have suffix == "" — check stem
     if not ext and path.name.startswith("."):
@@ -232,8 +251,14 @@ _NUEXTRACT_SCHEMA = {
     "required": ["entities", "relations"],
 }
 
-_NUEXTRACT_WINDOW = 4_000   # tokens per sliding-window chunk
-_PHI4_WINDOW      = 3_000   # tokens per chunk for phi-4 / kggen
+_NUEXTRACT_WINDOW       = 4_000   # tokens per sliding-window chunk
+_PHI4_WINDOW            = 3_000   # tokens per chunk for phi-4 / kggen
+_LARGE_PROSE_THRESHOLD  = _NUEXTRACT_WINDOW  # prose files above this go straight to phi4
+
+# Effective window sizes — overridden in main() by --chunk-size / --no-chunk
+_eff_nuextract_window: int = _NUEXTRACT_WINDOW
+_eff_phi4_window:      int = _PHI4_WINDOW
+_no_chunk:             bool = False
 
 
 def _chunk(text: str, max_tokens: int) -> list:
@@ -253,31 +278,38 @@ def _chunk(text: str, max_tokens: int) -> list:
 
 def _extract_nuextract3(text: str, model: str, api_base: str) -> dict:
     """Call nuextract3 (or any NuExtract-format model) via Ollama chat API."""
-    if _ollama_lib is None:
-        raise RuntimeError("ollama package not installed — run: pip install ollama")
+    if _ollama_client is None:
+        raise RuntimeError("ollama client not initialised — call _init_ollama_client() first")
 
-    prompt = f"<|input|>\n### Template:\n{_NUEXTRACT_TEMPLATE}\n### Text:\n{text}\n\n<|output|>"
-    chunks = _chunk(text, _NUEXTRACT_WINDOW)
+    chunks = [text] if _no_chunk else _chunk(text, _eff_nuextract_window)
     all_entities, all_relations = [], []
+    n = len(chunks)
 
-    for chunk in chunks:
+    for i, chunk in enumerate(chunks, 1):
+        if n > 1:
+            print(f"    chunk {i}/{n}...", end="\r", flush=True)
         chunk_prompt = f"<|input|>\n### Template:\n{_NUEXTRACT_TEMPLATE}\n### Text:\n{chunk}\n\n<|output|>"
+        t0 = time.time()
         response = _run_with_interrupt(
-            _ollama_lib.chat,
+            _ollama_client.chat,
             model=model,
             messages=[{"role": "user", "content": chunk_prompt}],
             think=False,
             format=_NUEXTRACT_SCHEMA,
             options={"temperature": 0.0},
-            host=api_base,
         )
+        elapsed = time.time() - t0
         raw = response["message"]["content"].strip()
         try:
             parsed = json.loads(raw)
         except json.JSONDecodeError:
             parsed = {}
-        all_entities.extend(e for e in parsed.get("entities", []) if e.get("name"))
-        all_relations.extend(r for r in parsed.get("relations", []) if r.get("subject"))
+        entities = [e for e in parsed.get("entities", []) if e.get("name")]
+        relations = [r for r in parsed.get("relations", []) if r.get("subject")]
+        all_entities.extend(entities)
+        all_relations.extend(relations)
+        if n > 1:
+            print(f"    chunk {i}/{n}  {elapsed:.0f}s  →  {len(entities)}e {len(relations)}r")
 
     # Deduplicate entities by name (case-insensitive)
     seen: set = set()
@@ -297,22 +329,34 @@ def _extract_phi4(text: str, model: str, api_base: str) -> dict:
         raise RuntimeError("kg-gen not installed — run: pip install kg-gen")
 
     kg = _KGGen(model=model, temperature=0.0, api_base=api_base)
-    chunks = _chunk(text, _PHI4_WINDOW)
+    chunks = [text] if _no_chunk else _chunk(text, _eff_phi4_window)
     all_entities, all_edges, all_relations = [], [], []
+    n = len(chunks)
 
-    for chunk in chunks:
+    for i, chunk in enumerate(chunks, 1):
+        if n > 1:
+            print(f"    chunk {i}/{n}...", end="\r", flush=True)
+        t0 = time.time()
         try:
             result = _run_with_interrupt(kg.generate, input_data=chunk)
-            if isinstance(result, dict):
-                all_entities.extend(result.get("entities", []))
-                all_edges.extend(result.get("edges", []))
-                all_relations.extend(result.get("relations", []))
-            else:
-                all_entities.extend(getattr(result, "entities", []) or [])
-                all_edges.extend(getattr(result, "edges", []) or [])
-                all_relations.extend(getattr(result, "relations", []) or [])
         except Exception as exc:
             raise RuntimeError(f"kg-gen chunk failed: {exc}") from exc
+        elapsed = time.time() - t0
+        if isinstance(result, dict):
+            chunk_e = result.get("entities", [])
+            chunk_r = result.get("relations", [])
+            chunk_edges = result.get("edges", [])
+        else:
+            chunk_e = getattr(result, "entities", []) or []
+            chunk_r = getattr(result, "relations", []) or []
+            chunk_edges = getattr(result, "edges", []) or []
+        # kg-gen occasionally emits bare predicate strings in the relations list — drop them
+        chunk_r = [r for r in chunk_r if isinstance(r, (list, tuple)) and len(r) == 3]
+        all_entities.extend(chunk_e)
+        all_edges.extend(chunk_edges)
+        all_relations.extend(chunk_r)
+        if n > 1:
+            print(f"    chunk {i}/{n}  {elapsed:.0f}s  →  {len(chunk_e)}e {len(chunk_r)}r")
 
     return {"entities": all_entities, "edges": all_edges, "relations": all_relations}
 
@@ -359,8 +403,8 @@ def _triage_file(file_path: Path, judge_model: str, api_base: str) -> tuple:
     Falls back to ("prose", "<error>") silently so a triage failure never
     blocks extraction.
     """
-    if _ollama_lib is None:
-        return "prose", "ollama not available"
+    if _ollama_client is None:
+        return "prose", "ollama client not initialised"
 
     text = file_path.read_text(encoding="utf-8", errors="replace")
     excerpt = text[:3000]
@@ -370,12 +414,11 @@ def _triage_file(file_path: Path, judge_model: str, api_base: str) -> tuple:
 
     try:
         response = _run_with_interrupt(
-            _ollama_lib.chat,
+            _ollama_client.chat,
             model=bare_model,
             messages=[{"role": "user", "content": prompt}],
             format=_TRIAGE_SCHEMA,
             options={"temperature": 0.0, "num_predict": 120},
-            host=api_base,
         )
         parsed = json.loads(response["message"]["content"].strip())
         cat = parsed.get("content_type", "prose")
@@ -705,8 +748,23 @@ def _preflight_model(bare_name: str, api_base: str, install_hint: str) -> bool:
         return True  # assume present; let the first extraction call surface the error
 
 
-def preflight(model_prose: str, model_code_litellm: str, api_base: str) -> None:
-    """Check Ollama is up and both models are available. Warn (not abort) on missing models."""
+def _warmup_model(bare_name: str) -> None:
+    """Send a 1-token request to load the model into VRAM before the main loop."""
+    print(f"  Warming up {bare_name}...", end="", flush=True)
+    t0 = time.time()
+    try:
+        _ollama_client.chat(
+            model=bare_name,
+            messages=[{"role": "user", "content": "hi"}],
+            options={"num_predict": 1},
+        )
+        print(f" ready ({time.time() - t0:.0f}s)")
+    except Exception as exc:
+        print(f" WARNING: warmup failed ({exc})")
+
+
+def preflight(model_prose: str, model_code_litellm: str, api_base: str, model_judge: str = None) -> None:
+    """Check Ollama is up, both models are available, and warm both into VRAM."""
     _preflight_ollama(api_base)
 
     bare_prose = model_prose
@@ -731,6 +789,16 @@ def preflight(model_prose: str, model_code_litellm: str, api_base: str) -> None:
         print(f"  INFO: prose model unavailable — prose files will use {bare_code} only.")
     if not code_ok:
         print(f"  INFO: code model unavailable — code/config files will use {bare_prose} only.")
+
+    bare_judge = model_judge.split("/", 1)[-1] if model_judge and "/" in model_judge else model_judge
+
+    print("  Warming up models (loads weights into VRAM — first file won't stall):")
+    if prose_ok:
+        _warmup_model(bare_prose)
+    if code_ok:
+        _warmup_model(bare_code)
+    if bare_judge and bare_judge != bare_code:
+        _warmup_model(bare_judge)
 
     print()
 
@@ -855,10 +923,31 @@ def main() -> None:
         "--no-triage", action="store_true",
         help="Skip content-based pre-routing; use extension-based routing only"
     )
+    parser.add_argument(
+        "--chunk-size", type=int, default=None, metavar="TOKENS",
+        help="Override token window size for both models (default: nuextract3=4000, phi4=3000)"
+    )
+    parser.add_argument(
+        "--no-chunk", action="store_true",
+        help="Disable chunking — pass full file text to the model in one call "
+             "(only safe for files that fit in the model's context window)"
+    )
+    parser.add_argument(
+        "--large-prose-threshold", type=int, default=_LARGE_PROSE_THRESHOLD, metavar="TOKENS",
+        help=f"Prose files larger than this (tokens) are routed to phi4 instead of nuextract3 "
+             f"(default: {_LARGE_PROSE_THRESHOLD}). Set to 0 to disable."
+    )
     args = parser.parse_args()
 
     if args.model_judge is None:
         args.model_judge = args.model_code
+
+    # Apply chunk-size / no-chunk overrides to module-level effective vars
+    global _eff_nuextract_window, _eff_phi4_window, _no_chunk
+    _no_chunk = args.no_chunk
+    if args.chunk_size:
+        _eff_nuextract_window = args.chunk_size
+        _eff_phi4_window      = args.chunk_size
 
     root = Path(args.dir)
     if not root.exists():
@@ -916,7 +1005,8 @@ def main() -> None:
             return
 
     # Preflight
-    preflight(args.model_prose, args.model_code, args.api_base)
+    _init_ollama_client(args.api_base)
+    preflight(args.model_prose, args.model_code, args.api_base, args.model_judge)
 
     # Routing helpers
     def _primary_for(cat: str) -> str:
@@ -935,10 +1025,20 @@ def main() -> None:
     # Extraction loop
     triage_enabled = not args.no_triage
     print(f"Starting extraction on {len(classified)} file(s).")
+    chunk_mode = "disabled (--no-chunk)" if args.no_chunk else (
+        f"{args.chunk_size} tokens (--chunk-size)" if args.chunk_size else
+        f"nuextract3={_eff_nuextract_window}, phi4={_eff_phi4_window} tokens"
+    )
+    large_prose = (
+        f">{args.large_prose_threshold} tokens → phi4" if args.large_prose_threshold > 0
+        else "disabled"
+    )
     print(f"  Prose model:  {args.model_prose}")
     print(f"  Code model:   {args.model_code}")
     print(f"  Judge model:  {args.model_judge}  (triage: {'enabled' if triage_enabled else 'disabled'})")
     print(f"  Fallback:     {'disabled' if args.no_fallback else 'enabled'}")
+    print(f"  Chunking:     {chunk_mode}")
+    print(f"  Large prose:  {large_prose}")
     print()
 
     # Track which models were actually called so we know what to unload
@@ -966,8 +1066,20 @@ def main() -> None:
                     args.model_judge.split("/", 1)[-1] if "/" in args.model_judge else args.model_judge
                 )
 
+            # Large-prose override: count tokens before routing if needed
+            token_count = None
+            if (triage_cat == "prose" or (triage_cat is None and category in ("prose", "unknown"))):
+                if args.large_prose_threshold > 0:
+                    text_preview = fp.read_text(encoding="utf-8", errors="replace")
+                    token_count = _count_tokens(text_preview)
+                    if token_count > args.large_prose_threshold:
+                        triage_cat = "large_prose"
+
             # Resolve routing — triage overrides extension-based defaults
-            if triage_cat == "structured":
+            if triage_cat == "large_prose":
+                primary, fallback = "phi4", None
+                print(f"  [large prose {token_count}tok > {args.large_prose_threshold} threshold → phi4]")
+            elif triage_cat == "structured":
                 primary, fallback = "phi4", None
             elif triage_cat == "mixed":
                 primary, fallback = "nuextract3", "phi4"  # always fall back for mixed
