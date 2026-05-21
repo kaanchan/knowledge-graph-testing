@@ -101,7 +101,7 @@ except ImportError:
 
 
 # ── Shared scan configuration ──────────────────────────────────────────────────
-from extract_config import build_ignore_spec, is_binary
+from extract_config import build_ignore_spec, is_binary, clean_output
 
 # ── File classification ────────────────────────────────────────────────────────
 
@@ -725,7 +725,15 @@ def main() -> None:
     )
     parser.add_argument(
         "--force", action="store_true",
-        help="Reprocess all files even if they appear in a previous output (disables resume)"
+        help="Reprocess files that already appear in the output (preserves other records)"
+    )
+    parser.add_argument(
+        "--clean", action="store_true",
+        help="Delete the output file entirely before running (prompts for confirmation)"
+    )
+    parser.add_argument(
+        "--yes", action="store_true",
+        help="Skip confirmation prompt when used with --clean"
     )
     parser.add_argument(
         "--no-gitignore", action="store_true",
@@ -761,6 +769,11 @@ def main() -> None:
     # Prepare output path early (needed for resume check before scanning)
     output_dir = Path(args.output_dir)
     output_path = output_dir / "dispatch-output.json"
+
+    # Clean: wipe output before starting if requested
+    if args.clean:
+        if not clean_output(output_path, yes=args.yes):
+            return
 
     # Scan and classify
     print(f"Scanning {root} ...")

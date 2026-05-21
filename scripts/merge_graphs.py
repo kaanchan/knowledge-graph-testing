@@ -18,8 +18,12 @@ GH issue: #7 (ref #8)
 import json
 import re
 import argparse
+import sys
 from pathlib import Path
 from collections import defaultdict
+
+sys.path.insert(0, str(Path(__file__).parent))
+from extract_config import clean_output
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -435,10 +439,27 @@ def main():
     parser.add_argument("--graphify-json",  required=True)
     parser.add_argument("--nuextract-json", required=True)
     parser.add_argument("--output-dir",     default="r&d/1-find-offline-semantic-tool/responses/")
+    parser.add_argument(
+        "--clean", action="store_true",
+        help="Delete existing merged-graph.* output files before running (prompts for confirmation)"
+    )
+    parser.add_argument(
+        "--yes", action="store_true",
+        help="Skip confirmation prompt when used with --clean"
+    )
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    if args.clean:
+        output_files = [
+            output_dir / "merged-graph.json",
+            output_dir / "merged-graph.html",
+            output_dir / "merged-graph-summary.md",
+        ]
+        if not clean_output(output_files, yes=args.yes):
+            return
 
     print("Loading graphify output...")
     g_nodes, g_links = load_graphify(args.graphify_json)

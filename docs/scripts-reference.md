@@ -22,7 +22,9 @@ uv run python scripts/dispatch_pipeline.py --dir <path> [options]
 | `--model-code` | `ollama_chat/phi4` | LiteLLM model string for code/config files |
 | `--api-base` | `http://localhost:11434` | Ollama API base URL |
 | `--no-fallback` | off | If primary fails, record error and continue (no fallback) |
-| `--force` | off | Reprocess all files (disables resume) |
+| `--force` | off | Reprocess files already in the output (other records preserved) |
+| `--clean` | off | Delete the output file entirely before running (prompts for confirmation) |
+| `--yes` | off | Skip confirmation prompt when used with `--clean` |
 | `--exclude DIR ...` | none | Extra directory names to skip |
 | `--no-gitignore` | off | Do not read `.gitignore` files |
 | `--no-defaults` | off | Disable built-in default exclusions |
@@ -54,7 +56,9 @@ uv run python scripts/nuextract_pipeline.py --docs-dir <path> [options]
 | `--output-dir` | `r&d/.../responses/` | Where to write `nuextract-output.json` |
 | `--model` | `nuextract3` | Ollama model name |
 | `--api-base` | `http://localhost:11434` | Ollama API base URL |
-| `--force` | off | Reprocess all files (disables resume) |
+| `--force` | off | Reprocess files already in the output (other records preserved) |
+| `--clean` | off | Delete the output file entirely before running (prompts for confirmation) |
+| `--yes` | off | Skip confirmation prompt when used with `--clean` |
 | `--exclude DIR ...` | none | Extra directory names to skip |
 | `--no-gitignore` | off | Do not read `.gitignore` files |
 | `--no-defaults` | off | Disable built-in default exclusions |
@@ -85,7 +89,9 @@ uv run python scripts/kggen_pipeline.py --files file1.py file2.md ... [options]
 | `--output-dir` | `r&d/.../responses/` | Where to write `kggen-output-sample.json` |
 | `--model` | `ollama_chat/phi-4` | LiteLLM model string |
 | `--api-base` | `http://localhost:11434` | Ollama API base URL |
-| `--force` | off | Reprocess all files |
+| `--force` | off | Reprocess files already in the output (other records preserved) |
+| `--clean` | off | Delete the output file entirely before running (prompts for confirmation) |
+| `--yes` | off | Skip confirmation prompt when used with `--clean` |
 | `--exclude DIR ...` | none | Extra directory names to skip |
 | `--no-gitignore` | off | Do not read `.gitignore` files |
 | `--no-defaults` | off | Disable built-in default exclusions |
@@ -110,6 +116,8 @@ uv run python scripts/merge_graphs.py --graphify-json <path> --nuextract-json <p
 | `--graphify-json` | required | Path to graphify `graph.json` |
 | `--nuextract-json` | required | Path to `nuextract-output.json` |
 | `--output-dir` | `r&d/.../responses/` | Where to write merged outputs |
+| `--clean` | off | Delete all three output files before running (prompts for confirmation) |
+| `--yes` | off | Skip confirmation prompt when used with `--clean` |
 
 **Outputs:**
 - `merged-graph.json` — unified graph (nodes + edges + meta)
@@ -125,6 +133,7 @@ Shared ignore/scan configuration module. Not run directly — imported by all th
 **Public API:**
 - `build_ignore_spec(root, respect_gitignore=True, extra_excludes=None, ignore_path=None, no_defaults=False) -> IgnoreSpec`
 - `is_binary(path, sample_size=8192) -> bool`
+- `clean_output(paths, yes=False) -> bool` — delete one or more output files; prompts unless `yes=True`
 - `DEFAULT_EXCLUDE_DIRS: frozenset` — the built-in exclusion list
 
 **`IgnoreSpec` methods:**

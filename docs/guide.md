@@ -304,16 +304,13 @@ If you stop a run mid-way (Ctrl+C, power cut, crash), simply re-run the same com
 
 ### 4.2 Force reprocess
 
-To ignore existing output and reprocess everything:
+`--force` reprocesses the matched files even when output records already exist, while keeping records for everything else:
 
 ```powershell
 uv run python scripts/dispatch_pipeline.py --dir "C:\path\to\codebase" --force
 ```
 
-Use `--force` when:
-- You have updated the codebase significantly since the last run
-- You changed the model (`--model-prose` / `--model-code`)
-- You suspect the previous run produced low-quality output (check with `--dry-run` first to confirm the file list is correct)
+For a completely blank slate, use `--clean` instead — see [Section 6](#6-cleaning-and-resetting).
 
 ### 4.3 Target a specific subdirectory
 
@@ -422,31 +419,56 @@ The custom file is treated as if it were a `.extractignore` at the scan root.
 
 ## 6. Cleaning and resetting
 
-There is no `make clean` command. Cleaning is manual and deliberate — to prevent accidental data loss.
+Two flags control how much history is discarded before a run:
 
-### 6.1 Reset extraction output (reprocess from scratch)
+| Flag | What it does | Scope |
+|---|---|---|
+| `--force` | Reprocess the matched files even if they already have output records. Other records in the output are kept. | File-level |
+| `--clean` | Delete the entire output file before starting. Prompts for confirmation. Add `--yes` to skip the prompt. | Output-level |
 
-The simplest approach — `--force` discards in-memory knowledge of previously processed files and overwrites the output JSON:
+Use `--force` when you want to re-extract specific files without losing everything else.
+Use `--clean` when you want a completely blank slate.
+
+### 6.1 Force-reprocess specific files
+
+`--force` rescans matched files and overwrites their records, leaving everything else untouched:
 
 ```powershell
-uv run python scripts/dispatch_pipeline.py --dir . --force
+# Reprocess only the files under docs/ (other records in the output survive)
+uv run python scripts/dispatch_pipeline.py --dir "C:\myapp\docs" --force
+
+# Reprocess everything
+uv run python scripts/dispatch_pipeline.py --dir "C:\myapp" --force
 ```
 
-### 6.2 Delete output files completely
+Use `--force` when:
+- You updated a subset of files and want fresh extraction for those files only
+- You changed the model and want to compare output quality
+- You suspect the previous run produced low-quality output for some files
 
-If you want a truly blank slate:
+### 6.2 Clean (wipe output and start fresh)
+
+`--clean` deletes the output file entirely before the run begins:
 
 ```powershell
-# Remove all extraction outputs
-Remove-Item "out\dispatch-output.json" -ErrorAction SilentlyContinue
-Remove-Item "r&d\1-find-offline-semantic-tool\responses\nuextract-output.json" -ErrorAction SilentlyContinue
-Remove-Item "r&d\1-find-offline-semantic-tool\responses\kggen-output-sample.json" -ErrorAction SilentlyContinue
+# Wipe nuextract-output.json and start fresh (will prompt "Confirm? [y/N]")
+uv run python scripts/nuextract_pipeline.py --docs-dir . --clean
 
-# Remove the merged graph
-Remove-Item "r&d\1-find-offline-semantic-tool\responses\merged-graph.*" -ErrorAction SilentlyContinue
+# Skip the prompt (for scripting / CI)
+uv run python scripts/nuextract_pipeline.py --docs-dir . --clean --yes
+
+# Wipe dispatch-output.json
+uv run python scripts/dispatch_pipeline.py --dir . --clean --yes
+
+# Wipe all three merged-graph.* files
+uv run python scripts/merge_graphs.py `
+  --graphify-json "..." --nuextract-json "..." --clean --yes
 ```
 
-After deleting, the next run starts fresh with no resume state.
+Use `--clean` when:
+- You want a guaranteed fresh run with no stale records
+- You changed the codebase significantly and old records would confuse resume logic
+- Something went wrong mid-run and the partial output is corrupted
 
 ### 6.3 Unload models from GPU memory
 

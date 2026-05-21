@@ -15,6 +15,7 @@ from extract_config import (
     DEFAULT_EXCLUDE_DIRS,
     IgnoreSpec,
     build_ignore_spec,
+    clean_output,
 )
 
 
@@ -173,3 +174,56 @@ class TestBuildIgnoreSpec:
         # Should warn, not raise
         spec = build_ignore_spec(tmp_path, ignore_path=str(tmp_path / "nonexistent.ignore"))
         assert isinstance(spec, IgnoreSpec)
+
+
+# ── clean_output ──────────────────────────────────────────────────────────────
+
+class TestCleanOutput:
+    def test_deletes_single_file_with_yes(self, tmp_path):
+        p = tmp_path / "out.json"
+        p.write_text("[]", encoding="utf-8")
+        result = clean_output(p, yes=True)
+        assert result is True
+        assert not p.exists()
+
+    def test_deletes_multiple_files_with_yes(self, tmp_path):
+        files = [tmp_path / f"f{i}.json" for i in range(3)]
+        for f in files:
+            f.write_text("{}", encoding="utf-8")
+        result = clean_output(files, yes=True)
+        assert result is True
+        assert all(not f.exists() for f in files)
+
+    def test_nonexistent_path_returns_false(self, tmp_path):
+        result = clean_output(tmp_path / "ghost.json", yes=True)
+        assert result is False
+
+    def test_mix_existing_nonexistent_deletes_existing(self, tmp_path):
+        real = tmp_path / "real.json"
+        real.write_text("{}", encoding="utf-8")
+        ghost = tmp_path / "ghost.json"
+        result = clean_output([real, ghost], yes=True)
+        assert result is True
+        assert not real.exists()
+
+    def test_declined_prompt_returns_false(self, tmp_path, monkeypatch):
+        p = tmp_path / "out.json"
+        p.write_text("[]", encoding="utf-8")
+        monkeypatch.setattr("builtins.input", lambda _: "n")
+        result = clean_output(p, yes=False)
+        assert result is False
+        assert p.exists()
+
+    def test_confirmed_prompt_deletes_file(self, tmp_path, monkeypatch):
+        p = tmp_path / "out.json"
+        p.write_text("[]", encoding="utf-8")
+        monkeypatch.setattr("builtins.input", lambda _: "y")
+        result = clean_output(p, yes=False)
+        assert result is True
+        assert not p.exists()
+
+    def test_accepts_path_object_directly(self, tmp_path):
+        p = tmp_path / "out.json"
+        p.write_text("x", encoding="utf-8")
+        result = clean_output(p, yes=True)
+        assert result is True

@@ -97,7 +97,7 @@ def _run_with_interrupt(fn, *args, **kwargs):
 
 
 # ── Shared scan configuration ──────────────────────────────────────────────────
-from extract_config import build_ignore_spec, is_binary
+from extract_config import build_ignore_spec, is_binary, clean_output
 
 
 # ── Preflight checks ──────────────────────────────────────────────────────────
@@ -451,7 +451,15 @@ def main():
     )
     parser.add_argument(
         "--force", action="store_true",
-        help="Reprocess all files even if already present in the output (disables resume)"
+        help="Reprocess files that already appear in the output (preserves other records)"
+    )
+    parser.add_argument(
+        "--clean", action="store_true",
+        help="Delete the output file entirely before running (prompts for confirmation)"
+    )
+    parser.add_argument(
+        "--yes", action="store_true",
+        help="Skip confirmation prompt when used with --clean"
     )
     parser.add_argument(
         "--exclude", nargs="*", default=[],
@@ -523,6 +531,11 @@ def main():
     # Prepare output path early so partial results can always be saved
     output_dir = Path(args.output_dir)
     output_path = output_dir / OUTPUT_FILENAME
+
+    # Clean: wipe output before starting if requested
+    if args.clean:
+        if not clean_output(output_path, yes=args.yes):
+            return
 
     # Strip LiteLLM prefix to get the bare Ollama model name for unloading
     bare_model = args.model.split("/", 1)[-1] if "/" in args.model else args.model

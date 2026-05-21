@@ -370,3 +370,44 @@ def build_ignore_spec(
                 print(f"  WARNING: --ignore-path not found: {custom}", file=sys.stderr)
 
     return IgnoreSpec(root, exclude_dirs, pathspec_rules, ignore_files_found)
+
+
+# ── Output cleanup ────────────────────────────────────────────────────────────
+
+def clean_output(paths, yes: bool = False) -> bool:
+    """Delete one or more output files after optional confirmation.
+
+    Parameters
+    ----------
+    paths : Path | list[Path]
+        File(s) to delete.  Non-existent paths are silently skipped.
+    yes : bool
+        Skip the interactive prompt (for scripting / --yes flag).
+
+    Returns
+    -------
+    bool
+        True if at least one file was deleted, False if nothing was cleaned
+        (nothing existed, or the user declined).
+    """
+    if isinstance(paths, Path):
+        paths = [paths]
+
+    existing = [p for p in paths if p.exists()]
+    if not existing:
+        print("  Nothing to clean — no output files found.")
+        return False
+
+    if not yes:
+        print("  The following file(s) will be permanently deleted:")
+        for p in existing:
+            print(f"    {p}")
+        answer = input("  Confirm? [y/N] ").strip().lower()
+        if answer not in ("y", "yes"):
+            print("  Aborted — nothing deleted.")
+            return False
+
+    for p in existing:
+        p.unlink()
+        print(f"  Cleaned: {p}")
+    return True
